@@ -22,17 +22,15 @@
      5. In console: Build → Realtime Database → Create database
         → Start in TEST MODE → Copy the database URL
      ════════════════════════════════════════════ */
-  const firebaseConfig = {
-  apiKey: "AIzaSyDKGfF4ziEzUlqEACTJ0bPmiYRcbn9vBtM",
-  authDomain: "konnngs-dfd9d.firebaseapp.com",
-  databaseURL: "https://konnngs-dfd9d-default-rtdb.firebaseio.com/
-",
-  projectId: "konnngs-dfd9d",
-  storageBucket: "konnngs-dfd9d.firebasestorage.app",
-  messagingSenderId: "954348230269",
-  appId: "1:954348230269:web:0049423f4f20d0ee560314"
-};
-
+ const firebaseConfig = {
+    apiKey: "AIzaSyDKGfF4ziEzUlqEACTJ0bPmiYRcbn9vBtM",
+    authDomain: "konnngs-dfd9d.firebaseapp.com",
+    databaseURL: "https://konnngs-dfd9d-default-rtdb.firebaseio.com",
+    projectId: "konnngs-dfd9d",
+    storageBucket: "konnngs-dfd9d.firebasestorage.app",
+    messagingSenderId: "954348230269",
+    appId: "1:954348230269:web:0049423f4f20d0ee560314"
+  };
 
   let app, db;
   let isFirebaseReady = false;
@@ -943,7 +941,6 @@ body.theme-kyeongjun .diary-body { color: #ffcdd2; }
       </div>
     </div>
 
-    <!-- CALENDAR TAB -->
     <div id="cal-tab" class="panel">
       <div class="card fade-up">
         <div class="card-head">📅 가족 정원 캘린더</div>
@@ -953,7 +950,6 @@ body.theme-kyeongjun .diary-body { color: #ffcdd2; }
       </div>
     </div>
 
-    <!-- ADMIN TAB -->
     <div id="admin-tab" class="panel">
       <div class="card fade-up">
         <div class="card-head">🌿 누나의 정원 관리</div>
@@ -964,11 +960,7 @@ body.theme-kyeongjun .diary-body { color: #ffcdd2; }
       </div>
     </div>
 
-  </div><!-- /content-wrap -->
-</div><!-- /user-screen -->
-
-<!-- ════ CELEBRATION ════ -->
-<div class="cel-overlay" id="cel-overlay" onclick="closeCel()">
+  </div></div><div class="cel-overlay" id="cel-overlay" onclick="closeCel()">
   <div class="cel-box" onclick="event.stopPropagation()">
     <span class="cel-emoji" id="cel-emoji">🎉</span>
     <div class="cel-title"  id="cel-title">잘했어요!</div>
@@ -1111,7 +1103,7 @@ function switchTab(tabId) {
 }
 
 /* ════════════════════════════════════════════
-   FIREBASE LISTENERS
+   FIREBASE LISTENERS (👨‍⚕️ 수술 완료 부위!)
 ════════════════════════════════════════════ */
 function attachListeners(uid) {
   // Remove old
@@ -1119,12 +1111,9 @@ function attachListeners(uid) {
   fbListeners = [];
 
   if (uid === 'admin') {
-    // Listen to all brothers
-    BROTHERS.forEach(b => {
-      const u1 = dbListen(`todos/${b}`,    () => renderAdminPanel());
-      const u2 = dbListen(`stickers/${b}`, () => renderAdminPanel());
-      fbListeners.push(u1, u2);
-    });
+    // 💡 동적 렌더링 버그 해결 💡
+    // 할 일이나 스티커가 바뀔 때마다 화면 전체를 싹 지우고 다시 그리던 범인을 제거했습니다.
+    // 화면의 '뼈대(입력창)'는 딱 한 번만 그리고, 내용은 내부에서 알아서 업데이트되게 놔둡니다!
     renderAdminPanel();
     renderAdminOverview();
   } else {
@@ -1465,7 +1454,7 @@ function updateOverviewCard(uid, data) {
 }
 
 /* ════════════════════════════════════════════
-   ADMIN PANEL
+   ADMIN PANEL (입력창 보호 구역!)
 ════════════════════════════════════════════ */
 function renderAdminPanel() {
   const row = document.getElementById('admin-row');
