@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리 가족 앱 🏠</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&family=Boogaloo&family=Jua&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════ RESET & BASE ═══════════════ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.6s ease;
+}
+
+/* ═══════════════ SCREENS ═══════════════ */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ═══════════════ HOME SCREEN ═══════════════ */
+#home-screen {
+  background: linear-gradient(135deg, #fff9f0 0%, #ffeedd 50%, #fff0f8 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px 20px;
+}
+.home-title {
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: #5a3e2b;
+  text-align: center;
+  margin-bottom: 12px;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.06);
+  letter-spacing: 0.02em;
+}
+.home-subtitle {
+  font-family: 'Gaegu', cursive;
+  font-size: 1.25rem; color: #9a7b6a;
+  margin-bottom: 48px; text-align: center;
+  letter-spacing: 0.03em;
+}
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 700px; width: 100%;
+}
+@media (max-width: 480px) { .profile-grid { grid-template-columns: 1fr; } }
+
+.profile-card {
+  background: white;
+  border-radius: 28px;
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  border: 4px solid transparent;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative; overflow: hidden;
+}
+.profile-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: 0; transition: opacity 0.3s;
+}
+.profile-card:hover { transform: translateY(-8px) scale(1.03); }
+.profile-card:hover::before { opacity: 1; }
+
+/* Admin card */
+.profile-card.admin { border-color: #c9a96e; }
+.profile-card.admin::before { background: linear-gradient(135deg, rgba(201,169,110,0.08), rgba(255,200,100,0.05)); }
+.profile-card.admin:hover { box-shadow: 0 20px 60px rgba(201,169,110,0.3); }
+
+/* Kyeongjun card */
+.profile-card.kyeongjun { border-color: #e53935; }
+.profile-card.kyeongjun::before { background: linear-gradient(135deg, rgba(229,57,53,0.08), rgba(255,100,80,0.05)); }
+.profile-card.kyeongjun:hover { box-shadow: 0 20px 60px rgba(229,57,53,0.3); }
+
+/* Junho card */
+.profile-card.junho { border-color: #29b6f6; }
+.profile-card.junho::before { background: linear-gradient(135deg, rgba(244,143,177,0.08), rgba(255,180,210,0.05)); }
+.profile-card.junho:hover { box-shadow: 0 20px 60px rgba(244,143,177,0.3); }
+
+/* Junsu card */
+.profile-card.junsu { border-color: #ffb347; }
+.profile-card.junsu::before { background: linear-gradient(135deg, rgba(255,179,71,0.08), rgba(255,210,100,0.05)); }
+.profile-card.junsu:hover { box-shadow: 0 20px 60px rgba(255,179,71,0.3); }
+
+.profile-avatar {
+  font-size: 56px; margin-bottom: 12px;
+  display: block; line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+  animation: float 3s ease-in-out infinite;
+}
+.profile-card:nth-child(2) .profile-avatar { animation-delay: 0.5s; }
+.profile-card:nth-child(3) .profile-avatar { animation-delay: 1s; }
+.profile-card:nth-child(4) .profile-avatar { animation-delay: 1.5s; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+.profile-name {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.5rem; margin-bottom: 4px;
+}
+.profile-card.admin .profile-name { color: #8b6914; }
+.profile-card.kyeongjun .profile-name { color: #c62828; }
+.profile-card.junho .profile-name { color: #0277bd; }
+.profile-card.junsu .profile-name { color: #e65100; }
+.profile-role { font-family: 'Gaegu', cursive; font-size: 1rem; color: #aaa; font-weight: 400; }
+
+/* ═══════════════ USER SCREEN BASE ═══════════════ */
+#user-screen { min-height: 100vh; position: relative; }
+
+/* ── KYEONGJUN THEME ── */
+body.theme-kyeongjun #user-screen {
+  background: linear-gradient(160deg, #1a0a0a 0%, #3b0000 30%, #b71c1c 70%, #e53935 100%);
+  color: #fff;
+}
+body.theme-kyeongjun { --primary: #ef5350; --accent: #ffeb3b; --card-bg: rgba(255,255,255,0.07); --card-border: rgba(239,83,80,0.4); --btn: #ef5350; --btn-text: #fff; }
+
+/* ── JUNHO THEME ── */
+body.theme-junho #user-screen {
+  background: linear-gradient(160deg, #e3f4fd 0%, #b3e5fc 40%, #e8f7ff 70%, #cceeff 100%);
+  color: #0d3b55;
+}
+body.theme-junho { --primary: #29b6f6; --accent: #b3e5fc; --card-bg: rgba(255,255,255,0.72); --card-border: rgba(41,182,246,0.25); --btn: #0288d1; --btn-text: #fff; }
+
+/* ── JUNSU THEME ── */
+body.theme-junsu #user-screen {
+  background: linear-gradient(160deg, #fff8e1 0%, #ffe0b2 40%, #fff3cd 70%, #ffe8b0 100%);
+  color: #4e2a04;
+}
+body.theme-junsu { --primary: #ff9800; --accent: #ffe082; --card-bg: rgba(255,255,255,0.7); --card-border: rgba(255,152,0,0.3); --btn: #ff9800; --btn-text: #fff; }
+
+/* ── ADMIN THEME ── */
+body.theme-admin #user-screen {
+  background: linear-gradient(160deg, #f9f5ee 0%, #f0e6d0 50%, #faf3e8 100%);
+  color: #3a2a10;
+}
+body.theme-admin { --primary: #c9a96e; --accent: #f5d88e; --card-bg: rgba(255,255,255,0.8); --card-border: rgba(201,169,110,0.3); --btn: #c9a96e; --btn-text: #fff; }
+
+/* ═══════════════ TOP NAV ═══════════════ */
+.top-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px;
+  background: rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 100;
+}
+body.theme-junho .top-nav,
+body.theme-junsu .top-nav,
+body.theme-admin .top-nav { background: rgba(255,255,255,0.4); }
+
+.nav-user-info { display: flex; align-items: center; gap: 12px; }
+.nav-avatar { font-size: 32px; }
+.nav-name { font-family: 'DM Sans', sans-serif; font-size: 1.3rem; }
+body.theme-kyeongjun .nav-name { color: #fff; }
+
+.back-btn {
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.4);
+  color: inherit; border-radius: 999px;
+  padding: 8px 20px; font-family: 'Nunito', sans-serif;
+  font-weight: 700; font-size: 0.9rem; cursor: pointer;
+  transition: all 0.2s;
+}
+body.theme-junho .back-btn,
+body.theme-junsu .back-btn,
+body.theme-admin .back-btn {
+  background: rgba(0,0,0,0.08);
+  border-color: rgba(0,0,0,0.15);
+  color: #555;
+}
+.back-btn:hover { transform: scale(1.05); }
+
+/* ═══════════════ THEME DECORATIONS ═══════════════ */
+.theme-deco {
+  position: fixed; pointer-events: none; z-index: 0;
+  font-size: 60px; opacity: 0.07;
+  animation: decoFloat 8s ease-in-out infinite;
+  user-select: none;
+}
+@keyframes decoFloat {
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-20px) rotate(10deg)}
+}
+
+/* ═══════════════ MAIN CONTENT ═══════════════ */
+.user-content {
+  max-width: 1000px; margin: 0 auto;
+  padding: 28px 20px 60px;
+  position: relative; z-index: 1;
+}
+
+/* ═══════════════ TAB NAV ═══════════════ */
+.tab-nav {
+  display: flex; gap: 8px; margin-bottom: 28px;
+  background: rgba(0,0,0,0.1);
+  padding: 6px; border-radius: 20px;
+  overflow-x: auto;
+}
+body.theme-junho .tab-nav,
+body.theme-junsu .tab-nav,
+body.theme-admin .tab-nav { background: rgba(0,0,0,0.06); }
+
+.tab-btn {
+  flex: 1; min-width: 80px;
+  background: transparent; border: none;
+  color: inherit; padding: 10px 16px;
+  border-radius: 14px; font-family: 'Nunito', sans-serif;
+  font-weight: 700; font-size: 0.9rem; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap; opacity: 0.6;
+}
+body.theme-kyeongjun .tab-btn { color: #fff; }
+.tab-btn.active {
+  background: var(--btn); color: var(--btn-text);
+  opacity: 1; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.tab-btn:hover:not(.active) { opacity: 0.85; transform: scale(1.03); }
+
+/* ═══════════════ PANEL BASE ═══════════════ */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ═══════════════ WELCOME BANNER ═══════════════ */
+.welcome-banner {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 28px; padding: 32px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.welcome-hero { font-size: 72px; margin-bottom: 8px; display: block; }
+.welcome-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+body.theme-kyeongjun .welcome-title { color: #ffeb3b; text-shadow: 2px 2px 0 #b71c1c; }
+body.theme-junho .welcome-title { color: #0277bd; }
+body.theme-junsu .welcome-title { color: #e65100; }
+body.theme-admin .welcome-title { color: #7a5520; }
+.welcome-sub { font-size: 1rem; opacity: 0.8; font-weight: 500; }
+
+/* ═══════════════ CARDS ═══════════════ */
+.card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 24px; padding: 24px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+.card-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.2rem; font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+body.theme-kyeongjun .card-title { color: #ffeb3b; }
+body.theme-junho .card-title { color: #0277bd; }
+body.theme-junsu .card-title { color: #e65100; }
+body.theme-admin .card-title { color: #7a5520; }
+
+/* ═══════════════ TODO LIST ═══════════════ */
+.todo-list { list-style: none; }
+.todo-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: 16px;
+  margin-bottom: 10px; transition: all 0.3s;
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.15);
+}
+body.theme-junho .todo-item,
+body.theme-junsu .todo-item,
+body.theme-admin .todo-item {
+  background: rgba(255,255,255,0.5);
+  border-color: var(--card-border);
+}
+.todo-item.done { opacity: 0.5; }
+.todo-item.done .todo-text { text-decoration: line-through; }
+
+.todo-check {
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 3px solid var(--primary);
+  background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; flex-shrink: 0;
+  font-size: 16px;
+}
+.todo-check.checked { background: var(--primary); border-color: var(--primary); }
+.todo-check:hover { transform: scale(1.15); }
+
+.todo-text { flex: 1; font-size: 1rem; font-weight: 600; }
+.todo-delete {
+  background: rgba(255,80,80,0.15); border: none;
+  border-radius: 8px; padding: 4px 10px;
+  cursor: pointer; font-size: 0.8rem; color: #e53935;
+  font-weight: 700; transition: all 0.2s;
+}
+.todo-delete:hover { background: #e53935; color: #fff; }
+
+.todo-empty {
+  text-align: center; padding: 32px;
+  opacity: 0.5; font-size: 1rem;
+}
+
+/* Admin assign form */
+.assign-form {
+  display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
+}
+.assign-form select,
+.assign-form input,
+.assign-form textarea {
+  width: 100%; padding: 12px 16px;
+  border-radius: 14px; border: 2px solid var(--card-border);
+  background: rgba(255,255,255,0.8);
+  font-family: 'Nunito', sans-serif; font-size: 1rem;
+  color: #333; outline: none;
+  transition: border-color 0.2s;
+}
+.assign-form select:focus,
+.assign-form input:focus { border-color: var(--primary); }
+
+/* ═══════════════ BTN ═══════════════ */
+.btn {
+  background: var(--btn); color: var(--btn-text);
+  border: none; border-radius: 14px;
+  padding: 12px 24px; font-family: 'Nunito', sans-serif;
+  font-weight: 800; font-size: 1rem; cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.btn:active { transform: scale(0.97); }
+.btn-sm { padding: 8px 16px; font-size: 0.85rem; }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--btn);
+  color: var(--btn);
+}
+body.theme-kyeongjun .btn-outline { color: var(--primary); }
+
+/* ═══════════════ DIARY ═══════════════ */
+.diary-input-wrap { margin-bottom: 16px; }
+.diary-input {
+  width: 100%; min-height: 110px;
+  padding: 16px; border-radius: 16px;
+  border: 2px solid var(--card-border);
+  background: rgba(255,255,255,0.8);
+  font-family: 'Gaegu', cursive; font-size: 1.15rem;
+  line-height: 1.8; resize: vertical; outline: none;
+  color: #333; transition: border-color 0.2s;
+}
+.diary-input:focus { border-color: var(--primary); }
+.diary-entries { margin-top: 20px; }
+.diary-entry {
+  background: rgba(255,255,255,0.5);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px; padding: 16px 20px;
+  margin-bottom: 12px;
+}
+body.theme-kyeongjun .diary-entry { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+.diary-date {
+  font-size: 0.8rem; font-weight: 700;
+  opacity: 0.6; margin-bottom: 6px;
+  font-family: 'Nunito', sans-serif;
+}
+.diary-text { font-family: 'Gaegu', cursive; font-size: 1.05rem; line-height: 1.8; }
+body.theme-kyeongjun .diary-text { color: #fff; }
+
+/* ═══════════════ STICKER BOARD ═══════════════ */
+.sticker-count-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; padding: 16px 20px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 16px;
+}
+body.theme-junho .sticker-count-bar,
+body.theme-junsu .sticker-count-bar,
+body.theme-admin .sticker-count-bar { background: rgba(0,0,0,0.05); }
+
+.sticker-count-label { font-weight: 800; font-size: 1rem; }
+.sticker-count-num {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 2rem; color: var(--btn);
+}
+body.theme-kyeongjun .sticker-count-num { color: #ffeb3b; }
+
+.milestone-badge {
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #5a3000; border-radius: 16px; padding: 16px 20px;
+  text-align: center; font-weight: 800; font-size: 1.05rem;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(255,170,0,0.4);
+  animation: milestoneGlow 1.5s ease-in-out infinite;
+}
+@keyframes milestoneGlow {
+  0%,100%{box-shadow:0 4px 20px rgba(255,170,0,0.4)}
+  50%{box-shadow:0 8px 40px rgba(255,170,0,0.7)}
+}
+
+.sticker-grid {
+  display: flex; flex-wrap: wrap; gap: 14px;
+}
+.sticker-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; width: 72px;
+  animation: stickerPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes stickerPop {
+  from{transform:scale(0) rotate(-20deg);opacity:0}
+  to{transform:scale(1) rotate(0);opacity:1}
+}
+.sticker-emoji { font-size: 44px; line-height: 1; }
+.sticker-date {
+  font-size: 0.62rem; font-weight: 700;
+  text-align: center; opacity: 0.7;
+  font-family: 'Nunito', sans-serif; line-height: 1.3;
+}
+body.theme-kyeongjun .sticker-date { color: #ffcdd2; }
+
+/* Add sticker btn (admin only in user view) */
+.add-sticker-wrap { margin-top: 20px; }
+
+/* ═══════════════ ADMIN PANEL ═══════════════ */
+.admin-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.admin-user-card {
+  background: var(--card-bg); border: 2px solid var(--card-border);
+  border-radius: 24px; padding: 20px;
+  backdrop-filter: blur(10px);
+}
+.admin-user-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.2rem; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ═══════════════ CELEBRATION OVERLAY ═══════════════ */
+.celebration-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.3s;
+}
+.celebration-overlay.show { opacity: 1; pointer-events: all; }
+.celebration-box {
+  background: white; border-radius: 32px;
+  padding: 48px 40px; text-align: center;
+  max-width: 380px; width: 90%;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.3);
+  transform: scale(0.8);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.celebration-overlay.show .celebration-box { transform: scale(1); }
+.celebration-emoji { font-size: 80px; display: block; margin-bottom: 16px; }
+.celebration-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 2rem; color: #333; margin-bottom: 8px;
+}
+.celebration-msg { color: #666; font-size: 1rem; margin-bottom: 24px; }
+
+/* ═══════════════ CONFETTI ═══════════════ */
+.confetti-piece {
+  position: fixed; width: 10px; height: 10px;
+  border-radius: 2px; z-index: 10000;
+  pointer-events: none;
+  animation: confettiFall 2.5s ease-in forwards;
+}
+@keyframes confettiFall {
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* ═══════════════ PROGRESS BAR ═══════════════ */
+.progress-wrap { margin: 12px 0; }
+.progress-label { font-size: 0.85rem; font-weight: 700; opacity: 0.7; margin-bottom: 6px; }
+.progress-bar {
+  height: 14px; background: rgba(0,0,0,0.1);
+  border-radius: 999px; overflow: hidden;
+}
+body.theme-kyeongjun .progress-bar { background: rgba(255,255,255,0.1); }
+.progress-fill {
+  height: 100%; border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+body.theme-kyeongjun .progress-fill { background: #ffeb3b; }
+
+/* ═══════════════ KYEONGJUN SPECIAL DECORATIONS ═══════════════ */
+.car-stripe {
+  height: 8px;
+  background: repeating-linear-gradient(90deg, #e53935 0px, #e53935 20px, #fff 20px, #fff 30px, #e53935 30px);
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  opacity: 0.4;
+}
+body:not(.theme-kyeongjun) .car-stripe { display: none; }
+
+/* ═══════════════ SCROLLBAR ═══════════════ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--primary, #ccc); border-radius: 999px; }
+
+/* ═══════════════ TRANSITIONS ═══════════════ */
+.fade-in { animation: fadeInUp 0.5s ease forwards; }
+@keyframes fadeInUp {
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ═══════════════ RESPONSIVE ═══════════════ */
+@media (max-width: 600px) {
+  .user-content { padding: 16px 12px 60px; }
+  .welcome-hero { font-size: 56px; }
+  .tab-btn { font-size: 0.8rem; padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HOME SCREEN
+══════════════════════════════════════ -->
+<div id="home-screen" class="screen active">
+  <h1 class="home-title">🏠 우리 가족 앱</h1>
+  <p class="home-subtitle">누구로 접속할까요? 🌟</p>
+
+  <div class="profile-grid">
+    <!-- Admin -->
+    <div class="profile-card admin" onclick="goToUser('admin')">
+      <span class="profile-avatar">👑</span>
+      <div class="profile-name">누나</div>
+      <div class="profile-role">Admin · 가이드</div>
+    </div>
+    <!-- Kyeongjun -->
+    <div class="profile-card kyeongjun" onclick="goToUser('kyeongjun')">
+      <span class="profile-avatar">🏎️</span>
+      <div class="profile-name">경준</div>
+      <div class="profile-role">레이서 🚦</div>
+    </div>
+    <!-- Junho -->
+    <div class="profile-card junho" onclick="goToUser('junho')">
+      <span class="profile-avatar">🧸</span>
+      <div class="profile-name">준호</div>
+      <div class="profile-role">곰돌이 친구 🐻</div>
+    </div>
+    <!-- Junsu -->
+    <div class="profile-card junsu" onclick="goToUser('junsu')">
+      <span class="profile-avatar">🐹</span>
+      <div class="profile-name">준수</div>
+      <div class="profile-role">햄찌 마스터 🌻</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     USER SCREEN
+══════════════════════════════════════ -->
+<div id="user-screen" class="screen">
+
+  <!-- Theme decorations (injected by JS) -->
+  <div id="theme-decos"></div>
+
+  <!-- NAV -->
+  <nav class="top-nav">
+    <div class="nav-user-info">
+      <span class="nav-avatar" id="nav-avatar"></span>
+      <span class="nav-name" id="nav-name"></span>
+    </div>
+    <button class="back-btn" onclick="goHome()">← 홈으로</button>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="user-content">
+
+    <!-- TAB NAV -->
+    <div class="tab-nav" id="tab-nav">
+      <button class="tab-btn active" data-tab="home-tab" onclick="switchTab('home-tab')">🏠 홈</button>
+      <button class="tab-btn" data-tab="todo-tab" onclick="switchTab('todo-tab')">✅ 할일</button>
+      <button class="tab-btn" data-tab="diary-tab" onclick="switchTab('diary-tab')">📓 일기</button>
+      <button class="tab-btn" data-tab="sticker-tab" onclick="switchTab('sticker-tab')">⭐ 스티커</button>
+      <button class="tab-btn admin-only" data-tab="admin-tab" onclick="switchTab('admin-tab')" style="display:none">🔧 관리</button>
+    </div>
+
+    <!-- ── HOME TAB ── -->
+    <div id="home-tab" class="panel active">
+      <div class="welcome-banner fade-in">
+        <span class="welcome-hero" id="welcome-emoji"></span>
+        <div class="welcome-title" id="welcome-title"></div>
+        <div class="welcome-sub" id="welcome-sub"></div>
+      </div>
+
+      <!-- Admin overview (only shown for admin) -->
+      <div id="admin-overview" style="display:none">
+        <div id="admin-overview-cards"></div>
+      </div>
+
+      <!-- Brother home cards (hidden for admin) -->
+      <div id="brother-home-cards">
+        <div class="card fade-in" id="home-sticker-preview">
+          <div class="card-title" id="home-sticker-title">⭐ 스티커 현황</div>
+          <div class="sticker-count-bar">
+            <span class="sticker-count-label">모은 스티커</span>
+            <span class="sticker-count-num" id="home-sticker-num">0</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label" id="progress-label">다음 선물까지 <span id="progress-left">10</span>개 남았어요! 🎁</div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-title" id="home-todo-title">📋 오늘 할일</div>
+          <ul class="todo-list" id="home-todo-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TODO TAB ── -->
+    <div id="todo-tab" class="panel">
+      <div class="card fade-in">
+        <div class="card-title" id="todo-card-title">✅ 나의 할일</div>
+        <ul class="todo-list" id="main-todo-list"></ul>
+      </div>
+    </div>
+
+    <!-- ── DIARY TAB ── -->
+    <div id="diary-tab" class="panel">
+      <div class="card fade-in">
+        <div class="card-title">📓 오늘의 일기</div>
+        <div class="diary-input-wrap">
+          <textarea class="diary-input" id="diary-input" placeholder="오늘 어떤 일이 있었나요? (2~3문장으로 써봐요 ✏️)" rows="4"></textarea>
+        </div>
+        <button class="btn" onclick="saveDiary()">💾 저장하기</button>
+
+        <div class="diary-entries" id="diary-entries"></div>
+      </div>
+    </div>
+
+    <!-- ── STICKER TAB ── -->
+    <div id="sticker-tab" class="panel">
+      <div class="card fade-in">
+        <div class="card-title">⭐ 나의 스티커 보드</div>
+
+        <div class="sticker-count-bar">
+          <span class="sticker-count-label">총 스티커</span>
+          <span class="sticker-count-num" id="sticker-total-num">0</span>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-label">다음 선물 <span id="sticker-progress-left">10</span>개 남았어요 🎁</div>
+          <div class="progress-bar"><div class="progress-fill" id="sticker-progress-fill" style="width:0%"></div></div>
+        </div>
+
+        <div id="milestone-banner" class="milestone-badge" style="display:none">
+          🎉 와아! 스티커 <span id="milestone-num">10</span>개 달성! 선물을 받아요! 🎁🎊
+        </div>
+
+        <div class="sticker-grid" id="sticker-grid"></div>
+
+        <!-- Admin sticker award (only visible to admin-mode or via secret PIN) -->
+        <div class="add-sticker-wrap" id="add-sticker-wrap" style="display:none">
+          <button class="btn" onclick="awardSticker()">✨ 스티커 선물하기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADMIN TAB ── -->
+    <div id="admin-tab" class="panel">
+      <div class="card fade-in">
+        <div class="card-title">🔧 누나의 관리 패널</div>
+        <p style="opacity:0.7;margin-bottom:20px;font-size:0.95rem">각 동생에게 할일을 추가하거나 스티커를 선물할 수 있어요!</p>
+
+        <div class="admin-grid" id="admin-grid">
+          <!-- injected by JS -->
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /user-content -->
+</div><!-- /user-screen -->
+
+<!-- ══════════════════════════════════════
+     CELEBRATION OVERLAY
+══════════════════════════════════════ -->
+<div class="celebration-overlay" id="celebration-overlay" onclick="closeCelebration()">
+  <div class="celebration-box" onclick="event.stopPropagation()">
+    <span class="celebration-emoji" id="cel-emoji">🎉</span>
+    <div class="celebration-title" id="cel-title">잘했어요!</div>
+    <div class="celebration-msg" id="cel-msg">멋지게 해냈어요!</div>
+    <button class="btn" onclick="closeCelebration()">감사해요! 😊</button>
+  </div>
+</div>
+
+<!-- Car stripe for Kyeongjun -->
+<div class="car-stripe"></div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA & CONFIG
+══════════════════════════════════════ */
+const USERS = {
+  admin: {
+    name: '누나 (Admin)',
+    avatar: '👑',
+    theme: 'admin',
+    emoji: '👑',
+    welcomeTitle: '어서 와, 누나! 관리 패널',
+    welcomeSub: '동생들의 할일과 스티커를 관리해요 🌟',
+    stickerEmoji: '⭐',
+    decos: ['🌟','✨','💛','🌸','🎀'],
+    sound: null,
+  },
+  kyeongjun: {
+    name: '경준',
+    avatar: '🏎️',
+    theme: 'kyeongjun',
+    emoji: '🏎️',
+    welcomeTitle: '안녕, 경준 레이서! 🏁',
+    welcomeSub: '오늘도 최고 속도로 달려보자! VROOM! 🚦',
+    stickerEmoji: '🏎️',
+    decos: ['🏎️','🚗','🏁','🔴','⚡','🏆','🧱'],
+    sound: 'kyeongjun',
+  },
+  junho: {
+    name: '준호',
+    avatar: '🧸',
+    theme: 'junho',
+    emoji: '🧸',
+    welcomeTitle: '안녕, 준호! 🐻',
+    welcomeSub: '오늘도 곰돌이랑 함께 행복한 하루! 🌸',
+    stickerEmoji: '🐻',
+    decos: ['🧸','🐰','🐻','🌸','🎀','💝','🌷'],
+    sound: 'junho',
+  },
+  junsu: {
+    name: '준수',
+    avatar: '🐹',
+    theme: 'junsu',
+    emoji: '🐹',
+    welcomeTitle: '안녕, 준수! 🐹',
+    welcomeSub: '햄찌가 해바라기씨를 모으듯, 오늘도 최고! 🌻',
+    stickerEmoji: '🐹',
+    decos: ['🐹','🌻','🌰','🏠','🌿','🍂','🐾'],
+    sound: 'junsu',
+  },
+};
+
+const BROTHERS = ['kyeongjun', 'junho', 'junsu'];
+
+let currentUser = null;
+
+/* ══════════════════════════════════════
+   LOCAL STORAGE HELPERS
+══════════════════════════════════════ */
+function lsGet(key) {
+  try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
+}
+function lsSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+
+function getTodos(user) { return lsGet(`todos_${user}`) || []; }
+function setTodos(user, todos) { lsSet(`todos_${user}`, todos); }
+function getDiaries(user) { return lsGet(`diaries_${user}`) || []; }
+function setDiaries(user, d) { lsSet(`diaries_${user}`, d); }
+function getStickers(user) { return lsGet(`stickers_${user}`) || []; }
+function setStickers(user, s) { lsSet(`stickers_${user}`, s); }
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function goHome() {
+  document.getElementById('home-screen').classList.add('active');
+  document.getElementById('user-screen').classList.remove('active');
+  document.body.className = '';
+  currentUser = null;
+  document.getElementById('theme-decos').innerHTML = '';
+}
+
+function goToUser(userId) {
+  currentUser = userId;
+  const user = USERS[userId];
+
+  // Switch screens
+  document.getElementById('home-screen').classList.remove('active');
+  document.getElementById('user-screen').classList.add('active');
+
+  // Apply theme
+  document.body.className = `theme-${user.theme}`;
+
+  // Nav
+  document.getElementById('nav-avatar').textContent = user.avatar;
+  document.getElementById('nav-name').textContent = user.name;
+
+  // Welcome
+  document.getElementById('welcome-emoji').textContent = user.emoji;
+  document.getElementById('welcome-title').textContent = user.welcomeTitle;
+  document.getElementById('welcome-sub').textContent = user.welcomeSub;
+
+  // Decorations
+  renderDecos(user.decos);
+
+  // Show/hide admin tab
+  document.querySelector('.admin-only').style.display =
+    userId === 'admin' ? 'block' : 'none';
+
+  // For admin: hide todo/diary/sticker tabs, show only home(overview) + admin
+  const brotherOnlyTabs = ['todo-tab', 'diary-tab', 'sticker-tab'];
+  brotherOnlyTabs.forEach(tabId => {
+    const btn = document.querySelector(`[data-tab="${tabId}"]`);
+    if (btn) btn.style.display = userId === 'admin' ? 'none' : '';
+  });
+  // Home tab label changes for admin
+  const homeTabBtn = document.querySelector('[data-tab="home-tab"]');
+  if (homeTabBtn) homeTabBtn.textContent = userId === 'admin' ? '📊 현황' : '🏠 홈';
+
+  // Show/hide sticker award btn
+  document.getElementById('add-sticker-wrap').style.display =
+    userId === 'admin' ? 'none' : 'block';
+
+  // Admin goes straight to admin tab; brothers go to home tab
+  switchTab(userId === 'admin' ? 'admin-tab' : 'home-tab');
+
+  // Render content
+  renderAll();
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tabId);
+  });
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.toggle('active', p.id === tabId);
+  });
+  // Re-render active tab content
+  renderAll();
+}
+
+/* ══════════════════════════════════════
+   DECORATIONS
+══════════════════════════════════════ */
+function renderDecos(decos) {
+  const wrap = document.getElementById('theme-decos');
+  wrap.innerHTML = '';
+  const positions = [
+    {top:'5%',left:'3%'},{top:'15%',right:'4%'},{top:'40%',left:'1%'},
+    {top:'60%',right:'2%'},{bottom:'20%',left:'5%'},{bottom:'10%',right:'6%'},
+    {top:'75%',left:'10%'},
+  ];
+  decos.slice(0,7).forEach((emoji, i) => {
+    const el = document.createElement('div');
+    el.className = 'theme-deco';
+    el.textContent = emoji;
+    const pos = positions[i] || {top:`${10+i*10}%`,left:`${5+i*5}%`};
+    Object.assign(el.style, pos);
+    el.style.animationDelay = `${i * 0.8}s`;
+    wrap.appendChild(el);
+  });
+}
+
+/* ══════════════════════════════════════
+   RENDER ALL
+══════════════════════════════════════ */
+function renderAll() {
+  if (!currentUser) return;
+  renderHomeSummary();
+  renderTodoList('main-todo-list', currentUser);
+  renderTodoList('home-todo-list', currentUser);
+  renderDiaries();
+  renderStickers();
+  if (currentUser === 'admin') renderAdminPanel();
+}
+
+/* ══════════════════════════════════════
+   TODO
+══════════════════════════════════════ */
+function renderTodoList(listId, user) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+  const todos = getTodos(user);
+
+  if (todos.length === 0) {
+    list.innerHTML = `<div class="todo-empty">할일이 없어요! 😊</div>`;
+    return;
+  }
+
+  list.innerHTML = todos.map((t, i) => `
+    <li class="todo-item ${t.done ? 'done' : ''}">
+      <button class="todo-check ${t.done ? 'checked' : ''}"
+        onclick="toggleTodo(${i})">${t.done ? '✓' : ''}</button>
+      <span class="todo-text">${escHtml(t.text)}</span>
+      <button class="todo-delete" onclick="deleteTodo(${i})">✕</button>
+    </li>
+  `).join('');
+}
+
+function toggleTodo(idx) {
+  const todos = getTodos(currentUser);
+  todos[idx].done = !todos[idx].done;
+  setTodos(currentUser, todos);
+  renderAll();
+
+  if (todos[idx].done) {
+    playSound(currentUser);
+    showMiniCelebration(currentUser);
+  }
+}
+
+function deleteTodo(idx) {
+  const todos = getTodos(currentUser);
+  todos.splice(idx, 1);
+  setTodos(currentUser, todos);
+  renderAll();
+}
+
+function addTodoForUser(userId, text) {
+  if (!text.trim()) return;
+  const todos = getTodos(userId);
+  todos.push({ text: text.trim(), done: false, id: Date.now() });
+  setTodos(userId, todos);
+  renderAll();
+}
+
+/* ══════════════════════════════════════
+   DIARY
+══════════════════════════════════════ */
+function saveDiary() {
+  const inp = document.getElementById('diary-input');
+  const text = inp.value.trim();
+  if (!text) { inp.focus(); return; }
+
+  const diaries = getDiaries(currentUser);
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+  diaries.unshift({ date: today, text });
+  setDiaries(currentUser, diaries);
+  inp.value = '';
+  renderDiaries();
+  showCelebration('📓', '일기 완성!', '오늘의 이야기를 담았어요 ✍️', currentUser);
+}
+
+function renderDiaries() {
+  const wrap = document.getElementById('diary-entries');
+  if (!wrap) return;
+  const diaries = getDiaries(currentUser);
+  if (diaries.length === 0) {
+    wrap.innerHTML = `<p style="opacity:0.5;text-align:center;padding:20px">아직 일기가 없어요. 첫 일기를 써봐요! ✏️</p>`;
+    return;
+  }
+  wrap.innerHTML = diaries.map(d => `
+    <div class="diary-entry">
+      <div class="diary-date">📅 ${d.date}</div>
+      <div class="diary-text">${escHtml(d.text)}</div>
+    </div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════
+   STICKERS
+══════════════════════════════════════ */
+function awardSticker() {
+  awardStickerTo(currentUser);
+}
+
+function awardStickerTo(userId) {
+  const stickers = getStickers(userId);
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'-').replace('.','');
+  stickers.push({ emoji: USERS[userId].stickerEmoji, date: today, id: Date.now() });
+  setStickers(userId, stickers);
+  renderAll();
+
+  const count = stickers.length;
+  if (count % 10 === 0) {
+    showCelebration('🏆', `${count}개 달성!`, `와! 스티커를 ${count}개 모았어요! 선물을 받아요! 🎁`, userId);
+    spawnConfetti();
+  } else {
+    showCelebration(USERS[userId].stickerEmoji, '스티커 획득!', `${USERS[userId].name}에게 스티커를 선물했어요! ⭐`, userId);
+    spawnConfetti(10);
+  }
+}
+
+function renderStickers() {
+  const grid = document.getElementById('sticker-grid');
+  const totalEl = document.getElementById('sticker-total-num');
+  const homeNum = document.getElementById('home-sticker-num');
+  const progressLeft = document.getElementById('sticker-progress-left');
+  const progressFill = document.getElementById('sticker-progress-fill');
+  const homeProgressLeft = document.getElementById('progress-left');
+  const homeProgressFill = document.getElementById('progress-fill');
+  const milestoneBanner = document.getElementById('milestone-banner');
+  const milestoneNum = document.getElementById('milestone-num');
+
+  const stickers = getStickers(currentUser);
+  const count = stickers.length;
+  const nextMilestone = Math.ceil((count + 0.1) / 10) * 10;
+  const left = nextMilestone - count;
+  const pct = ((count % 10) / 10) * 100;
+
+  // Update counts
+  if (totalEl) totalEl.textContent = count;
+  if (homeNum) homeNum.textContent = count;
+  if (progressLeft) progressLeft.textContent = left;
+  if (homeProgressLeft) homeProgressLeft.textContent = left;
+  if (progressFill) progressFill.style.width = pct + '%';
+  if (homeProgressFill) homeProgressFill.style.width = pct + '%';
+
+  // Milestone banner
+  if (milestoneBanner) {
+    const isMilestone = count > 0 && count % 10 === 0;
+    milestoneBanner.style.display = isMilestone ? 'block' : 'none';
+    if (milestoneNum) milestoneNum.textContent = count;
+  }
+
+  // Grid
+  if (!grid) return;
+  if (stickers.length === 0) {
+    grid.innerHTML = `<p style="opacity:0.5;text-align:center;width:100%;padding:24px">아직 스티커가 없어요. 열심히 해봐요! 💪</p>`;
+    return;
+  }
+  grid.innerHTML = stickers.map(s => `
+    <div class="sticker-item">
+      <span class="sticker-emoji">${s.emoji}</span>
+      <span class="sticker-date">Awarded:<br>${s.date}</span>
+    </div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════
+   HOME SUMMARY
+══════════════════════════════════════ */
+function renderHomeSummary() {
+  const isAdmin = currentUser === 'admin';
+
+  document.getElementById('admin-overview').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('brother-home-cards').style.display = isAdmin ? 'none' : 'block';
+
+  if (isAdmin) {
+    renderAdminOverview();
+  } else {
+    renderTodoList('home-todo-list', currentUser);
+    renderStickers();
+  }
+}
+
+function renderAdminOverview() {
+  const wrap = document.getElementById('admin-overview-cards');
+  if (!wrap) return;
+  wrap.innerHTML = BROTHERS.map(userId => {
+    const u = USERS[userId];
+    const todos = getTodos(userId);
+    const stickers = getStickers(userId);
+    const done = todos.filter(t => t.done).length;
+    const total = todos.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const nextMilestone = Math.ceil((stickers.length + 0.1) / 10) * 10;
+    const left = nextMilestone - stickers.length;
+    const sPct = ((stickers.length % 10) / 10) * 100;
+
+    const themeColors = {
+      kyeongjun: { bg: '#fff0f0', border: '#e53935', accent: '#c62828', pill: '#ffebee' },
+      junho:     { bg: '#e8f7ff', border: '#29b6f6', accent: '#0277bd', pill: '#e3f4fd' },
+      junsu:     { bg: '#fff8e1', border: '#ffb347', accent: '#e65100', pill: '#fff3cd' },
+    };
+    const c = themeColors[userId];
+
+    return `
+      <div class="card fade-in" style="border-color:${c.border};background:${c.bg};margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:32px">${u.avatar}</span>
+            <span style="font-family:'DM Sans',sans-serif;font-size:1.2rem;font-weight:700;color:${c.accent}">${u.name}</span>
+          </div>
+          <span style="background:${c.pill};color:${c.accent};border-radius:999px;padding:4px 14px;font-size:0.8rem;font-weight:700;font-family:'DM Sans',sans-serif">
+            ${u.stickerEmoji} ${stickers.length}개
+          </span>
+        </div>
+
+        <div style="margin-bottom:10px">
+          <div style="font-size:0.8rem;font-weight:600;opacity:0.6;margin-bottom:4px;font-family:'DM Sans',sans-serif">
+            할일 진행도 ${done}/${total}
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${pct}%;background:${c.accent}"></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.8rem;font-weight:600;opacity:0.6;margin-bottom:4px;font-family:'DM Sans',sans-serif">
+            다음 선물까지 ${left}개 남음 🎁
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${sPct}%;background:${c.border}"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════ */
+function renderAdminPanel() {
+  const grid = document.getElementById('admin-grid');
+  if (!grid) return;
+
+  grid.innerHTML = BROTHERS.map(userId => {
+    const u = USERS[userId];
+    const todos = getTodos(userId);
+    const stickers = getStickers(userId);
+    return `
+      <div class="admin-user-card">
+        <div class="admin-user-title">${u.avatar} ${u.name}
+          <span style="font-size:0.75rem;opacity:0.6;font-family:'Nunito',sans-serif;font-weight:600">
+            (스티커 ${stickers.length}개)
+          </span>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <input id="todo-input-${userId}" type="text"
+            placeholder="할일 입력..."
+            style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid var(--card-border);background:rgba(255,255,255,0.85);font-family:'Nunito',sans-serif;font-size:0.95rem;outline:none;margin-bottom:8px"
+            onkeydown="if(event.key==='Enter')adminAddTodo('${userId}')"
+          >
+          <button class="btn btn-sm" onclick="adminAddTodo('${userId}')">+ 할일 추가</button>
+        </div>
+
+        <div style="margin-bottom:12px;font-size:0.85rem;font-weight:700;opacity:0.7">
+          현재 할일 ${todos.length}개 (완료: ${todos.filter(t=>t.done).length}개)
+        </div>
+        <ul class="todo-list" style="margin-bottom:12px">
+          ${todos.length === 0
+            ? `<div class="todo-empty" style="padding:12px">할일 없음</div>`
+            : todos.slice(0,3).map((t,i) => `
+              <li class="todo-item ${t.done?'done':''}" style="padding:8px 12px">
+                <span style="font-size:1rem">${t.done?'✅':'⬜'}</span>
+                <span class="todo-text" style="font-size:0.9rem">${escHtml(t.text)}</span>
+              </li>`).join('')
+          }
+          ${todos.length > 3 ? `<li style="padding:8px 12px;opacity:0.5;font-size:0.85rem">... 외 ${todos.length-3}개</li>` : ''}
+        </ul>
+
+        <button class="btn btn-sm" style="background:linear-gradient(135deg,#ffd700,#ffaa00);color:#5a3000"
+          onclick="adminAwardSticker('${userId}')">
+          ✨ ${u.stickerEmoji} 스티커 선물
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function adminAddTodo(userId) {
+  const inp = document.getElementById(`todo-input-${userId}`);
+  if (!inp || !inp.value.trim()) return;
+  addTodoForUser(userId, inp.value);
+  inp.value = '';
+  renderAdminPanel();
+}
+
+function adminAwardSticker(userId) {
+  awardStickerTo(userId);
+  renderAdminPanel();
+}
+
+/* ══════════════════════════════════════
+   SOUND EFFECTS (Web Audio API)
+══════════════════════════════════════ */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx;
+function getCtx() {
+  if (!ctx) ctx = new AudioCtx();
+  return ctx;
+}
+
+function playSound(userId) {
+  try {
+    const ac = getCtx();
+    if (userId === 'kyeongjun') playEngineRev(ac);
+    else if (userId === 'junho') playSoftSqueak(ac);
+    else if (userId === 'junsu') playCuteChu(ac);
+    else playChime(ac);
+  } catch(e) {}
+}
+
+function playEngineRev(ac) {
+  // Vroom!
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.connect(gain); gain.connect(ac.destination);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(80, ac.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(300, ac.currentTime + 0.3);
+  osc.frequency.exponentialRampToValueAtTime(150, ac.currentTime + 0.6);
+  gain.gain.setValueAtTime(0.3, ac.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.7);
+  osc.start(); osc.stop(ac.currentTime + 0.7);
+}
+
+function playSoftSqueak(ac) {
+  // Soft squeak 뿅~
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.connect(gain); gain.connect(ac.destination);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(600, ac.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(900, ac.currentTime + 0.1);
+  osc.frequency.exponentialRampToValueAtTime(500, ac.currentTime + 0.3);
+  gain.gain.setValueAtTime(0.2, ac.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.4);
+  osc.start(); osc.stop(ac.currentTime + 0.4);
+}
+
+function playCuteChu(ac) {
+  // Cute chu!
+  [0, 0.1].forEach((delay, i) => {
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.connect(gain); gain.connect(ac.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800 + i*200, ac.currentTime + delay);
+    osc.frequency.exponentialRampToValueAtTime(1000 + i*100, ac.currentTime + delay + 0.08);
+    gain.gain.setValueAtTime(0.15, ac.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + delay + 0.15);
+    osc.start(ac.currentTime + delay);
+    osc.stop(ac.currentTime + delay + 0.2);
+  });
+}
+
+function playChime(ac) {
+  [523, 659, 784].forEach((freq, i) => {
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.connect(gain); gain.connect(ac.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.15, ac.currentTime + i * 0.12);
+    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + i * 0.12 + 0.4);
+    osc.start(ac.currentTime + i * 0.12);
+    osc.stop(ac.currentTime + i * 0.12 + 0.5);
+  });
+}
+
+/* ══════════════════════════════════════
+   CELEBRATION
+══════════════════════════════════════ */
+function showCelebration(emoji, title, msg) {
+  document.getElementById('cel-emoji').textContent = emoji;
+  document.getElementById('cel-title').textContent = title;
+  document.getElementById('cel-msg').textContent = msg;
+  document.getElementById('celebration-overlay').classList.add('show');
+}
+
+function showMiniCelebration(userId) {
+  const u = USERS[userId];
+  showCelebration('🎉', '완료!', `잘했어요, ${u.name}! 👏`);
+  spawnConfetti(12);
+}
+
+function closeCelebration() {
+  document.getElementById('celebration-overlay').classList.remove('show');
+}
+
+function spawnConfetti(count = 30) {
+  const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff922b','#f06292','#ab47bc'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.top = '-20px';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width = (8 + Math.random() * 8) + 'px';
+      el.style.height = (8 + Math.random() * 8) + 'px';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }, i * 60);
+  }
+}
+
+/* ══════════════════════════════════════
+   UTILS
+══════════════════════════════════════ */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/\n/g,'<br>');
+}
+
+/* ══════════════════════════════════════
+   INIT — Seed demo data if empty
+══════════════════════════════════════ */
+function seedDemoData() {
+  if (!lsGet('seeded_v1')) {
+    setTodos('kyeongjun', [
+      { text: '수학 숙제 하기 🔢', done: false, id: 1 },
+      { text: '레고 정리하기 🧱', done: false, id: 2 },
+    ]);
+    setTodos('junho', [
+      { text: '책 20분 읽기 📚', done: false, id: 3 },
+      { text: '방 청소하기 🧹', done: false, id: 4 },
+    ]);
+    setTodos('junsu', [
+      { text: '햄찌 밥 주기 🐹', done: false, id: 5 },
+      { text: '영어 단어 10개 외우기 📖', done: false, id: 6 },
+    ]);
+    lsSet('seeded_v1', true);
+  }
+}
+
+seedDemoData();
+</script>
+</body>
+</html>
