@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>마인크래프트 가족 서버 ⛏️</title>
+<title>우리 가족 서버 ⛏️</title>
 <link href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css" rel="stylesheet">
 
 <script type="module">
@@ -76,6 +76,7 @@
     color: var(--mc-text);
     margin: 0; padding: 0;
     image-rendering: pixelated; 
+    overflow-x: hidden; /* 파티클 화면 넘어감 방지 */
   }
 
   /* 화면 숨기고 보여주기 */
@@ -94,6 +95,7 @@
     border: 4px solid;
     border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light);
     width: 340px; margin: 0 auto; padding: 20px;
+    position: relative; z-index: 10;
   }
   .mc-title-area { text-align: center; margin-bottom: 20px; font-size: 1.2rem; font-weight: bold; }
   .mc-subtitle { font-size: 0.8rem; opacity: 0.6; }
@@ -110,12 +112,12 @@
   .mc-label { font-size: 0.75rem; margin-top: 5px; color: white; text-shadow: 1px 1px 0 #000; }
 
   /* 네비게이션 & 탭 */
-  #nav-bar { background-color: #1a1a1a; color: #fff; padding: 15px; border-bottom: 4px solid #4a4a4a; display: flex; align-items: center; justify-content: space-between; }
-  .nav-tabs { display: flex; gap: 5px; padding: 10px; background: #555; overflow-x: auto; scrollbar-width: none; }
+  #nav-bar { background-color: #1a1a1a; color: #fff; padding: 15px; border-bottom: 4px solid #4a4a4a; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10; }
+  .nav-tabs { display: flex; gap: 5px; padding: 10px; background: #555; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 10; }
   .nav-tabs::-webkit-scrollbar { display: none; }
   
   /* 콘텐츠 영역 */
-  .content-wrap { max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
+  .content-wrap { max-width: 800px; margin: 0 auto; padding-bottom: 50px; position: relative; z-index: 10; }
 
   /* 마크 UI 스타일 (상자 느낌) */
   .card, .admin-kid-card {
@@ -151,22 +153,33 @@
   /* 인벤토리 슬롯 형식의 아이템 */
   .flower-item { background-color: #8b8b8b; border: 4px solid; border-color: #3B3B3B #ffffff #ffffff #3B3B3B; padding: 10px; text-align: center; font-size: 2rem; width: 60px; display: flex; flex-direction: column; align-items: center; }
 
-  /* 알림창(모달) 뼈대 복구 */
+  /* 알림창(모달) */
   #cel-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; }
   #cel-overlay.show { display: flex; }
   .cel-box { background: var(--mc-ui); border: 4px solid; border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light); padding: 30px; text-align: center; max-width: 300px; }
   
-  /* 마크식 프로필 배경색 (배경색 심플화) */
-  #scene-bg { position: relative; height: 120px; overflow: hidden; border: 4px solid var(--mc-border-dark); margin: 15px; }
-  .theme-admin #scene-bg { background: #E6C200; }  
-  .theme-kyeongjun #scene-bg { background: #3B5323; } 
-  .theme-junho #scene-bg { background: #B0E0E6; } 
-  .theme-junsu #scene-bg { background: #7CFC00; } 
+  /* 마크식 프로필 상단 영역 */
+  #scene-bg { position: relative; height: 120px; overflow: hidden; border: 4px solid var(--mc-border-dark); margin: 15px; background: var(--mc-ui); z-index: 10;}
   
-  /* 동물 픽셀 이미지화 및 배경 제거 */
+  /* 동물 픽셀 이미지 */
   .mc-pixelated-mobs { position: absolute; font-size: 4rem; bottom: 10px; right: 10px; image-rendering: pixelated; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
   
-  /* 경험치 띠링 애니메이션 (블록 통통) */
+  /* 🎇 마크식 하얀 불꽃놀이 파티클 (새로 추가됨!) */
+  .mc-spark {
+    position: fixed;
+    background-color: #ffffff; /* 하얀색 픽셀 */
+    pointer-events: none;
+    z-index: 5; /* 컨텐츠 뒤에서 터지게 설정 */
+    box-shadow: 0 0 4px rgba(255,255,255,0.8);
+    animation: fireworkBurst var(--dur) ease-out forwards;
+  }
+  @keyframes fireworkBurst {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+  }
+
+  /* 퀘스트 완료 시 통통 튀는 경험치/아이템 */
   @keyframes bloomParticle { 0% { transform: scale(1); } 50% { transform: scale(1.5) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
   .bloom-particle { font-size: 2rem; position: fixed; animation: bloomParticle 0.5s ease; pointer-events: none; z-index: 9998; text-shadow: 2px 2px 0 #000; }
 
@@ -182,7 +195,7 @@
 <div id="home-screen" class="screen active">
   <div class="mc-inventory-ui">
     <div class="mc-title-area">
-      Minecraft World<br>
+      Minecraft Server<br>
       <span class="mc-subtitle">접속할 플레이어를 선택하세요</span>
     </div>
     
@@ -224,7 +237,7 @@
 
   <div id="scene-bg"></div>
   
-  <div style="padding: 0 15px;">
+  <div style="padding: 0 15px; position:relative; z-index:10;">
     <h2 id="welcome-title" style="margin: 0; font-size: 1.3rem;"></h2>
     <p id="welcome-sub" style="margin: 5px 0 10px 0; font-size: 0.9rem; opacity: 0.7;"></p>
   </div>
@@ -521,6 +534,42 @@ function playSound(uid) {
     o.start(ac.currentTime); o.stop(ac.currentTime + 0.3);
   } catch(e) {} 
 }
+
+/* 🎇 랜덤 하얀 픽셀 불꽃놀이 (파티클) 생성기 */
+function spawnAmbientFireworks() {
+  // 화면 중앙~위쪽에서 터지도록 위치 설정
+  const x = 50 + Math.random() * (window.innerWidth - 100);
+  const y = 50 + Math.random() * (window.innerHeight / 2);
+  
+  // 한 번에 10~15개의 하얀 네모가 팡 터짐
+  const particleCount = 10 + Math.floor(Math.random() * 6);
+  for (let i = 0; i < particleCount; i++) {
+    const el = document.createElement('div');
+    el.className = 'mc-spark';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    
+    // 네모 픽셀 크기 (2px ~ 6px 랜덤)
+    const size = 2 + Math.floor(Math.random() * 4);
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    
+    // 폭발 각도 및 속도
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = 30 + Math.random() * 80;
+    el.style.setProperty('--tx', (Math.cos(angle) * velocity) + 'px');
+    el.style.setProperty('--ty', (Math.sin(angle) * velocity) + 'px');
+    el.style.setProperty('--dur', (0.8 + Math.random() * 0.5) + 's');
+    
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1500); // 애니메이션 끝나면 삭제
+  }
+}
+
+// 1.5초마다 40% 확률로 화면에 불꽃놀이 팡팡 터뜨리기!
+setInterval(() => {
+  if (Math.random() > 0.6) spawnAmbientFireworks();
+}, 1500);
 
 goHome();
 </script>
