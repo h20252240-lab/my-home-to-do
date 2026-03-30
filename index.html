@@ -75,725 +75,94 @@
 </script>
 
 <style>
-/* ════════════════════════════════════
-   TOKENS & RESET
-════════════════════════════════════ */
-:root {
-  --grass:      #7ec850;
-  --grass-dark: #5a9e35;
-  --grass-pale: #d4edba;
-  --soil:       #c4955a;
-  --soil-light: #e8c99a;
-  --sky:        #b8e4f7;
-  --sky-deep:   #78c8f0;
-  --petal-pink: #ffb3c6;
-  --petal-yel:  #ffe066;
-  --petal-blue: #a8d8f0;
-  --leaf:       #4caf50;
-  --bark:       #8b5e3c;
-  --cream:      #fffbf0;
-  --shadow:     rgba(90,60,20,0.12);
+  @import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
 
-  /* Kyeongjun */
-  --kj-red:   #e53935;
-  --kj-dark:  #b71c1c;
-  --kj-lego:  #1565c0;
-  --kj-track: #78909c;
+  :root {
+    --mc-bg: #8b8b8b;
+    --mc-ui: #c6c6c6;
+    --mc-border-light: #ffffff;
+    --mc-border-dark: #555555;
+    --mc-text: #111111;
+    --t-main: #388e3c;
+  }
 
-  /* Junho */
-  --jh-blue:  #4fc3f7;
-  --jh-soft:  #e1f5fe;
-  --jh-cloud: #fff;
-  --jh-patch: #b3e5fc;
+  body {
+    font-family: 'Galmuri11', sans-serif;
+    background-color: var(--mc-bg);
+    color: var(--mc-text);
+    margin: 0; padding: 0;
+    /* 도트 이미지(이모지) 깨짐 방지 */
+    image-rendering: pixelated; 
+  }
 
-  /* Junsu */
-  --js-warm:  #ff9800;
-  --js-earth: #a1887f;
-  --js-seed:  #ffe082;
-  --js-burrow:#795548;
-}
+  /* 마인크래프트 인벤토리 창 느낌의 카드 */
+  .card, .panel, .admin-kid-card {
+    background-color: var(--mc-ui);
+    border: 4px solid;
+    border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light);
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+  }
 
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Nunito', sans-serif;
-  background: linear-gradient(180deg, #c8eeff 0%, #a8daf7 20%, #d4edba 60%, #7ec850 100%);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+  /* 네모 반듯한 마크식 버튼 */
+  button, .btn {
+    font-family: 'Galmuri11', sans-serif;
+    background-color: #7A7A7A;
+    color: white;
+    border: 4px solid;
+    border-color: #AFAFAF #3B3B3B #3B3B3B #AFAFAF;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-shadow: 2px 2px 0px #3B3B3B;
+  }
+  button:active, .btn:active {
+    border-color: #3B3B3B #AFAFAF #AFAFAF #3B3B3B;
+  }
+  .tab-btn.active {
+    background-color: #5E9D34; /* 잔디블록 색상 */
+    border-color: #87C65D #315C16 #315C16 #87C65D;
+  }
 
-/* ════════════════════════════════════
-   SCREEN SYSTEM
-════════════════════════════════════ */
-.screen { display: none; min-height: 100vh; }
-.screen.active { display: flex; flex-direction: column; }
+  /* 입력창 (마크 채팅창 느낌) */
+  input, .g-input {
+    font-family: 'Galmuri11', sans-serif;
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #a0a0a0;
+    padding: 8px;
+  }
 
-/* ════════════════════════════════════
-   CONNECTION BADGE
-════════════════════════════════════ */
-#conn-badge {
-  position: fixed; top: 12px; right: 12px; z-index: 999;
-  padding: 4px 12px; border-radius: 999px;
-  font-size: 0.72rem; font-weight: 700; font-family: 'Nunito', sans-serif;
-  background: rgba(255,193,7,0.2); color: #f57f17;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.4);
-}
+  /* 리스트 스타일 */
+  .todo-item {
+    background-color: rgba(255,255,255,0.5);
+    border: 2px solid #888;
+    margin-bottom: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* 아이템 그리드 (인벤토리 슬롯 느낌) */
+  .flower-item {
+    background-color: #8b8b8b;
+    border: 4px solid;
+    border-color: #3B3B3B #ffffff #ffffff #3B3B3B;
+    padding: 10px;
+    text-align: center;
+    font-size: 2rem;
+  }
 
-/* ════════════════════════════════════
-   GARDEN HOME SCREEN
-════════════════════════════════════ */
-#home-screen {
-  background:
-    radial-gradient(ellipse 120% 50% at 50% 100%, #5a9e35 0%, transparent 60%),
-    linear-gradient(180deg, #a8daf7 0%, #c8eeff 35%, #d4edba 65%, #7ec850 100%);
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 0;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Animated grass layer */
-.grass-layer {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 180px;
-  background: linear-gradient(180deg, transparent 0%, #5a9e35 40%, #3d7a22 100%);
-  border-radius: 60% 60% 0 0 / 30px 30px 0 0;
-}
-.grass-blades {
-  position: absolute; bottom: 140px; left: 0; right: 0;
-  display: flex; justify-content: space-around; align-items: flex-end;
-}
-.blade {
-  width: 8px; height: 32px;
-  background: linear-gradient(180deg, #7ec850 0%, #5a9e35 100%);
-  border-radius: 4px 4px 2px 2px;
-  transform-origin: bottom center;
-  animation: swayBlade 3s ease-in-out infinite;
-}
-.blade:nth-child(even) { animation-delay: 0.5s; height: 24px; }
-.blade:nth-child(3n) { animation-delay: 1s; height: 40px; }
-@keyframes swayBlade {
-  0%,100%{transform:rotate(-4deg)} 50%{transform:rotate(4deg)}
-}
-
-/* Floating clouds */
-.cloud {
-  position: absolute;
-  background: rgba(255,255,255,0.85);
-  border-radius: 50px;
-  filter: blur(2px);
-  animation: driftCloud linear infinite;
-}
-.cloud::before, .cloud::after {
-  content:''; position:absolute;
-  background: inherit; border-radius: 50%;
-}
-@keyframes driftCloud {
-  from{transform:translateX(-120%)} to{transform:translateX(110vw)}
-}
-
-/* Sun */
-.sun {
-  position: absolute; top: 40px; right: 80px;
-  width: 72px; height: 72px;
-  background: radial-gradient(circle, #ffe066 40%, #ffcc00 70%, transparent 100%);
-  border-radius: 50%;
-  box-shadow: 0 0 40px 10px rgba(255,220,50,0.4);
-  animation: sunPulse 4s ease-in-out infinite;
-}
-@keyframes sunPulse {
-  0%,100%{box-shadow:0 0 40px 10px rgba(255,220,50,0.4)}
-  50%{box-shadow:0 0 60px 20px rgba(255,220,50,0.6)}
-}
-
-/* Title area */
-.garden-title-wrap {
-  position: relative; z-index: 10;
-  text-align: center;
-  padding: 60px 20px 0;
-  width: 100%;
-}
-.garden-title {
-  font-family: 'Jua', sans-serif;
-  font-size: clamp(2.2rem, 8vw, 3.8rem);
-  color: #fff;
-  text-shadow:
-    0 3px 0 var(--grass-dark),
-    0 6px 16px rgba(0,0,0,0.2);
-  letter-spacing: 0.02em;
-  margin-bottom: 6px;
-}
-.garden-subtitle {
-  font-family: 'Gaegu', cursive;
-  font-size: 1.2rem; color: rgba(255,255,255,0.9);
-  text-shadow: 0 1px 6px rgba(0,0,0,0.2);
-  margin-bottom: 40px;
-}
-
-/* Profile cards */
-.profile-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  max-width: 520px; width: 90%;
-  position: relative; z-index: 10;
-  margin: 0 auto;
-  padding-bottom: 180px;
-}
-@media(max-width:400px){ .profile-row{ grid-template-columns:1fr; max-width:260px; } }
-
-.plot-card {
-  background: rgba(255,255,255,0.88);
-  border-radius: 28px;
-  padding: 24px 16px 20px;
-  text-align: center;
-  cursor: pointer;
-  border: 3px solid rgba(255,255,255,0.6);
-  box-shadow: 0 8px 32px var(--shadow), 0 2px 0 rgba(255,255,255,0.8) inset;
-  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
-  position: relative; overflow: hidden;
-}
-.plot-card::before {
-  content:''; position:absolute; inset:0; border-radius:inherit;
-  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 60%);
-}
-.plot-card:hover { transform: translateY(-8px) scale(1.04); }
-.plot-card.admin:hover { box-shadow: 0 20px 48px rgba(201,169,80,0.35); }
-.plot-card.kyeongjun:hover { box-shadow: 0 20px 48px rgba(229,57,53,0.3); }
-.plot-card.junho:hover { box-shadow: 0 20px 48px rgba(79,195,247,0.3); }
-.plot-card.junsu:hover { box-shadow: 0 20px 48px rgba(255,152,0,0.3); }
-
-.plot-icon { font-size: 52px; display: block; margin-bottom: 8px;
-  animation: plotFloat 3s ease-in-out infinite; }
-.plot-card:nth-child(2) .plot-icon { animation-delay:.4s }
-.plot-card:nth-child(3) .plot-icon { animation-delay:.8s }
-.plot-card:nth-child(4) .plot-icon { animation-delay:1.2s }
-@keyframes plotFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-
-.plot-name {
-  font-family: 'Jua', sans-serif; font-size: 1.3rem; margin-bottom: 2px;
-}
-.plot-card.admin .plot-name  { color: #8b6000; }
-.plot-card.kyeongjun .plot-name { color: var(--kj-dark); }
-.plot-card.junho .plot-name  { color: #01579b; }
-.plot-card.junsu .plot-name  { color: #bf360c; }
-
-.plot-role { font-family: 'Gaegu', cursive; font-size: 0.95rem; color: #999; }
-
-/* Decorative flowers on home */
-.home-flower {
-  position: absolute; font-size: 28px;
-  animation: homeFlowerSway 4s ease-in-out infinite;
-  z-index: 5; pointer-events: none;
-}
-@keyframes homeFlowerSway {
-  0%,100%{transform:rotate(-8deg) scale(1)} 50%{transform:rotate(8deg) scale(1.05)}
-}
-
-/* ════════════════════════════════════
-   USER SCREEN (SHARED WRAPPER)
-════════════════════════════════════ */
-#user-screen { position: relative; overflow: hidden; }
-
-/* Per-theme backgrounds */
-body.theme-admin #user-screen {
-  background: linear-gradient(160deg, #f0fae8 0%, #ddf0c8 40%, #eefade 100%);
-}
-body.theme-kyeongjun #user-screen {
-  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-}
-body.theme-junho #user-screen {
-  background: linear-gradient(160deg, #e1f5fe 0%, #b3e5fc 45%, #e8f7ff 100%);
-}
-body.theme-junsu #user-screen {
-  background: linear-gradient(160deg, #fff8e1 0%, #ffe0b2 45%, #fff3cd 100%);
-}
-
-/* ════ CSS VARIABLES PER THEME ════ */
-body.theme-admin {
-  --t-primary: #4caf50; --t-accent: #8bc34a;
-  --t-card: rgba(255,255,255,0.8); --t-border: rgba(100,180,80,0.25);
-  --t-btn: #4caf50; --t-btnTxt: #fff;
-  --t-title: #2e7d32; --t-sub: #558b2f;
-  --t-text: #1b5e20;
-}
-body.theme-kyeongjun {
-  --t-primary: #ef5350; --t-accent: #ffeb3b;
-  --t-card: rgba(255,255,255,0.07); --t-border: rgba(239,83,80,0.35);
-  --t-btn: #ef5350; --t-btnTxt: #fff;
-  --t-title: #ffeb3b; --t-sub: #ffcdd2;
-  --t-text: #fff;
-}
-body.theme-junho {
-  --t-primary: #29b6f6; --t-accent: #b3e5fc;
-  --t-card: rgba(255,255,255,0.72); --t-border: rgba(41,182,246,0.25);
-  --t-btn: #0288d1; --t-btnTxt: #fff;
-  --t-title: #01579b; --t-sub: #0277bd;
-  --t-text: #0d3b55;
-}
-body.theme-junsu {
-  --t-primary: #ffa726; --t-accent: #ffe082;
-  --t-card: rgba(255,255,255,0.72); --t-border: rgba(255,152,0,0.28);
-  --t-btn: #f57c00; --t-btnTxt: #fff;
-  --t-title: #bf360c; --t-sub: #e65100;
-  --t-text: #3e2000;
-}
-
-/* ════ THEMED SCENE DECORATION ════ */
-.scene-bg {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
-}
-
-/* Kyeongjun: LEGO race track */
-.kj-track {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
-  background: repeating-linear-gradient(
-    90deg, #546e7a 0px, #546e7a 48px, #fff 48px, #fff 58px
-  );
-  opacity: 0.15; border-radius: 0;
-}
-.kj-lego-brick {
-  position: absolute;
-  width: 36px; height: 20px;
-  background: var(--kj-red);
-  border-radius: 4px;
-  box-shadow: 0 3px 0 #7f0000, 2px 2px 0 #ff5252 inset;
-  animation: legoBounce 2s ease-in-out infinite;
-}
-.kj-lego-brick::before, .kj-lego-brick::after {
-  content:''; position:absolute;
-  width: 10px; height: 6px; background: #ef9a9a;
-  border-radius: 50% 50% 0 0; top: -5px;
-}
-.kj-lego-brick::before { left: 5px; }
-.kj-lego-brick::after  { left: 21px; }
-@keyframes legoBounce {
-  0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)}
-}
-.kj-car {
-  position: absolute; font-size: 40px;
-  animation: raceCar 8s linear infinite;
-  bottom: 80px;
-}
-@keyframes raceCar {
-  from{left:-60px} to{left:110vw}
-}
-
-/* Junho: floating clouds & plushies */
-.jh-cloud-deco {
-  position: absolute; background: rgba(255,255,255,0.7);
-  border-radius: 50px; filter: blur(1px);
-  animation: jCloudDrift linear infinite;
-}
-.jh-cloud-deco::before {
-  content:''; position:absolute; width:60%; height:140%;
-  background: inherit; border-radius:50%; top:-40%; left:20%;
-}
-@keyframes jCloudDrift {
-  from{transform:translateX(-120px)} to{transform:translateX(110vw)}
-}
-.jh-plush {
-  position: absolute; font-size: 38px;
-  animation: plushBounce 3s ease-in-out infinite;
-}
-@keyframes plushBounce {
-  0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-12px) rotate(5deg)}
-}
-
-/* Junsu: burrow holes & seeds */
-.js-burrow {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, #4e342e 0%, #3e2723 80%, transparent 100%);
-  animation: burrowPulse 3s ease-in-out infinite;
-}
-@keyframes burrowPulse {
-  0%,100%{transform:scale(1) scaleY(0.4)} 50%{transform:scale(1.05) scaleY(0.45)}
-}
-.js-hamster {
-  position: absolute; font-size: 42px;
-  animation: hamsterPeek 4s ease-in-out infinite;
-  transform-origin: bottom center;
-}
-@keyframes hamsterPeek {
-  0%,100%{transform:translateY(10px) scale(0.85)} 30%,70%{transform:translateY(0) scale(1)}
-}
-.js-seed {
-  position: absolute; font-size: 20px;
-  animation: seedFloat 5s ease-in-out infinite;
-}
-@keyframes seedFloat {
-  0%,100%{transform:rotate(-15deg) translateY(0)} 50%{transform:rotate(15deg) translateY(-10px)}
-}
-
-/* ════ TOP NAV ════ */
-.top-nav {
-  position: sticky; top: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 20px;
-  backdrop-filter: blur(16px) saturate(1.4);
-  border-bottom: 1px solid rgba(255,255,255,0.3);
-  position: relative; z-index: 100;
-}
-body.theme-kyeongjun .top-nav { background: rgba(15,20,60,0.7); }
-body.theme-junho    .top-nav { background: rgba(180,230,250,0.5); }
-body.theme-junsu    .top-nav { background: rgba(255,240,200,0.5); }
-body.theme-admin    .top-nav { background: rgba(200,240,170,0.5); }
-
-.nav-left { display:flex; align-items:center; gap:10px; }
-.nav-avatar { font-size: 30px; }
-.nav-name { font-family: 'Jua', sans-serif; font-size: 1.15rem; color: var(--t-title); }
-
-.back-btn {
-  background: rgba(255,255,255,0.25); border: 2px solid rgba(255,255,255,0.4);
-  color: var(--t-title); border-radius: 999px;
-  padding: 7px 18px; font-family: 'Nunito', sans-serif;
-  font-weight: 700; font-size: 0.85rem; cursor: pointer;
-  transition: all 0.2s;
-}
-.back-btn:hover { background: rgba(255,255,255,0.45); transform: scale(1.05); }
-
-/* ════ TAB BAR ════ */
-.tab-bar {
-  display: flex; gap: 6px;
-  padding: 10px 16px;
-  background: rgba(0,0,0,0.05);
-  overflow-x: auto; scrollbar-width: none;
-  position: relative; z-index: 10;
-}
-.tab-bar::-webkit-scrollbar { display: none; }
-.tab-btn {
-  flex-shrink: 0;
-  background: rgba(255,255,255,0.3);
-  border: 1.5px solid rgba(255,255,255,0.5);
-  border-radius: 999px; padding: 8px 16px;
-  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.85rem;
-  cursor: pointer; color: var(--t-text); opacity: 0.65;
-  transition: all 0.2s; white-space: nowrap;
-}
-.tab-btn.active {
-  background: var(--t-btn); color: var(--t-btnTxt);
-  opacity: 1; border-color: transparent;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-}
-.tab-btn:hover:not(.active) { opacity: 0.9; transform: scale(1.04); }
-
-/* ════ PANEL ════ */
-.panel { display: none; }
-.panel.active { display: block; }
-
-/* ════ MAIN CONTENT ════ */
-.content-wrap {
-  max-width: 900px; margin: 0 auto;
-  padding: 20px 16px 80px;
-  position: relative; z-index: 5;
-  flex: 1;
-}
-
-/* ════ CARD ════ */
-.card {
-  background: var(--t-card);
-  border: 2px solid var(--t-border);
-  border-radius: 24px; padding: 20px;
-  margin-bottom: 18px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-}
-.card-head {
-  font-family: 'Jua', sans-serif;
-  font-size: 1.2rem; color: var(--t-title);
-  margin-bottom: 14px;
-  display: flex; align-items: center; gap: 8px;
-}
-
-/* ════ BTN ════ */
-.btn {
-  background: var(--t-btn); color: var(--t-btnTxt);
-  border: none; border-radius: 16px;
-  padding: 11px 22px; font-family: 'Nunito', sans-serif;
-  font-weight: 800; font-size: 0.95rem; cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-}
-.btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 8px 22px rgba(0,0,0,0.2); }
-.btn:active { transform: scale(0.97); }
-.btn-sm { padding: 7px 14px; font-size: 0.82rem; border-radius: 12px; }
-.btn-ghost {
-  background: transparent; border: 2px solid var(--t-btn); color: var(--t-btn);
-  box-shadow: none;
-}
-
-/* ════ INPUT ════ */
-.g-input, .g-select, .g-textarea {
-  width: 100%; padding: 11px 16px;
-  border-radius: 14px;
-  border: 2px solid var(--t-border);
-  background: rgba(255,255,255,0.85);
-  font-family: 'Nunito', sans-serif; font-size: 0.95rem;
-  color: #333; outline: none;
-  transition: border-color 0.2s;
-}
-.g-input:focus, .g-select:focus, .g-textarea:focus { border-color: var(--t-primary); }
-.g-textarea { min-height: 100px; resize: vertical; font-family: 'Gaegu', cursive; font-size: 1.05rem; }
-
-/* ════ WELCOME BANNER ════ */
-.welcome-banner {
-  position: relative; overflow: hidden;
-  border-radius: 28px; padding: 28px 24px;
-  margin-bottom: 18px;
-  background: var(--t-card);
-  border: 2px solid var(--t-border);
-  text-align: center;
-}
-.welcome-hero { font-size: 64px; display: block; margin-bottom: 6px;
-  animation: plotFloat 3s ease-in-out infinite; }
-.welcome-title {
-  font-family: 'Jua', sans-serif;
-  font-size: clamp(1.4rem, 4vw, 2rem);
-  color: var(--t-title); margin-bottom: 4px;
-}
-.welcome-sub { font-family: 'Gaegu', cursive; font-size: 1.05rem; color: var(--t-sub); opacity: 0.85; }
-
-/* ════ TODO ════ */
-.todo-list { list-style: none; }
-.todo-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 13px 14px; border-radius: 16px;
-  margin-bottom: 10px;
-  background: rgba(255,255,255,0.35);
-  border: 1.5px solid rgba(255,255,255,0.5);
-  transition: all 0.3s;
-}
-body.theme-kyeongjun .todo-item {
-  background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12);
-}
-.todo-item.done { opacity: 0.45; }
-.todo-item.done .todo-text { text-decoration: line-through; }
-
-.check-btn {
-  width: 30px; height: 30px; border-radius: 50%;
-  border: 3px solid var(--t-primary);
-  background: transparent; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; transition: all 0.25s; flex-shrink: 0;
-}
-.check-btn.done {
-  background: var(--t-primary); border-color: var(--t-primary);
-}
-.check-btn:hover { transform: scale(1.15); }
-.todo-text { flex: 1; font-size: 0.95rem; font-weight: 600; color: var(--t-text); }
-body.theme-kyeongjun .todo-text { color: #fff; }
-.del-btn {
-  background: rgba(220,50,50,0.1); border: none; border-radius: 8px;
-  padding: 3px 9px; cursor: pointer; font-size: 0.75rem;
-  color: #e53935; font-weight: 700; transition: all 0.2s;
-}
-.del-btn:hover { background: #e53935; color: #fff; }
-.todo-empty { text-align: center; padding: 28px; opacity: 0.5; font-size: 0.95rem; color: var(--t-sub); }
-
-/* ════ GARDEN / STICKER FLOWER BED ════ */
-.flower-bed {
-  min-height: 160px;
-  background:
-    radial-gradient(ellipse 80% 40% at 50% 100%, rgba(90,158,53,0.3) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(100,180,60,0.08) 100%);
-  border-radius: 20px;
-  border: 2px dashed rgba(100,180,60,0.3);
-  padding: 20px 16px;
-  position: relative;
-}
-.flower-grid {
-  display: flex; flex-wrap: wrap; gap: 16px;
-  align-items: flex-end;
-}
-.flower-item {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  animation: flowerBloom 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
-}
-@keyframes flowerBloom {
-  from{transform:scale(0) rotate(-30deg);opacity:0}
-  to{transform:scale(1) rotate(0);opacity:1}
-}
-.flower-emoji { font-size: 40px; line-height: 1; }
-.flower-date {
-  font-size: 0.6rem; font-weight: 700; text-align: center;
-  opacity: 0.65; font-family: 'Nunito', sans-serif; line-height: 1.3;
-  color: var(--t-sub);
-}
-.bed-empty {
-  position: absolute; inset: 0; display: flex;
-  flex-direction: column; align-items: center; justify-content: center;
-  gap: 8px; opacity: 0.45;
-}
-.bed-empty-icon { font-size: 40px; }
-.bed-empty-text { font-family: 'Gaegu', cursive; font-size: 1rem; color: var(--t-sub); }
-
-/* Sticker progress */
-.sticker-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px;
-}
-.sticker-count {
-  font-family: 'Jua', sans-serif; font-size: 2rem; color: var(--t-primary);
-}
-body.theme-kyeongjun .sticker-count { color: #ffeb3b; }
-.progress-track {
-  height: 12px; background: rgba(0,0,0,0.08); border-radius: 999px; overflow: hidden;
-  margin-bottom: 6px;
-}
-body.theme-kyeongjun .progress-track { background: rgba(255,255,255,0.1); }
-.progress-bar {
-  height: 100%; border-radius: 999px;
-  background: linear-gradient(90deg, var(--t-primary), var(--t-accent));
-  transition: width 0.9s cubic-bezier(0.34,1.56,0.64,1);
-}
-.progress-hint {
-  font-size: 0.8rem; font-weight: 700; opacity: 0.65; color: var(--t-sub);
-}
-
-/* Milestone badge */
-.milestone-badge {
-  background: linear-gradient(135deg, #ffd700, #ff9800);
-  color: #5a2000; border-radius: 16px; padding: 14px 18px;
-  font-weight: 800; font-size: 1rem; text-align: center;
-  margin-bottom: 16px; line-height: 1.5;
-  box-shadow: 0 4px 20px rgba(255,150,0,0.4);
-  animation: milestoneGlow 1.8s ease-in-out infinite;
-}
-@keyframes milestoneGlow {
-  0%,100%{box-shadow:0 4px 20px rgba(255,150,0,0.35)}
-  50%{box-shadow:0 6px 36px rgba(255,150,0,0.65)}
-}
-
-/* ════ DIARY ════ */
-.diary-entry {
-  background: rgba(255,255,255,0.5);
-  border: 1.5px solid var(--t-border);
-  border-radius: 16px; padding: 14px 18px; margin-bottom: 12px;
-}
-body.theme-kyeongjun .diary-entry { background: rgba(255,255,255,0.07); }
-.diary-date { font-size: 0.75rem; font-weight: 700; opacity: 0.6; margin-bottom: 5px; }
-.diary-body { font-family: 'Gaegu', cursive; font-size: 1.05rem; line-height: 1.9; color: var(--t-text); }
-body.theme-kyeongjun .diary-body { color: #ffcdd2; }
-
-/* ════ CALENDAR ════ */
-.cal-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
-  margin-bottom: 16px;
-}
-.cal-day-label {
-  text-align: center; font-size: 0.72rem; font-weight: 700;
-  opacity: 0.5; padding: 4px 0; color: var(--t-text);
-}
-.cal-cell {
-  aspect-ratio: 1; border-radius: 10px;
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 1px; position: relative;
-  background: rgba(255,255,255,0.2); border: 1.5px solid transparent;
-  transition: all 0.2s; cursor: default;
-}
-.cal-cell.today { border-color: var(--t-primary); }
-.cal-cell.has-activity { background: rgba(76,175,80,0.15); }
-.cal-num { font-size: 0.72rem; font-weight: 700; color: var(--t-text); opacity: 0.8; }
-.cal-dots { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; max-width: 28px; }
-.cal-dot { width: 5px; height: 5px; border-radius: 50%; }
-
-/* ════ ADMIN PANEL ════ */
-.admin-row {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;
-}
-.admin-kid-card {
-  background: var(--t-card); border: 2px solid var(--t-border);
-  border-radius: 20px; padding: 18px;
-  backdrop-filter: blur(10px);
-}
-.admin-kid-title {
-  font-family: 'Jua', sans-serif; font-size: 1.1rem; color: var(--t-title);
-  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-}
-.admin-stat-row {
-  display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
-}
-.stat-pill {
-  background: rgba(255,255,255,0.4); border-radius: 999px;
-  padding: 3px 12px; font-size: 0.78rem; font-weight: 700;
-  color: var(--t-text); border: 1px solid rgba(255,255,255,0.5);
-}
-
-/* ════ OVERVIEW CARDS ════ */
-.overview-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
-  margin-bottom: 18px;
-}
-.overview-card {
-  border-radius: 20px; padding: 16px 14px;
-  background: rgba(255,255,255,0.6);
-  border: 2px solid rgba(255,255,255,0.7);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-}
-.overview-icon { font-size: 28px; margin-bottom: 6px; }
-.overview-name { font-family: 'Jua', sans-serif; font-size: 1rem; margin-bottom: 8px; }
-
-/* ════ CELEBRATION ════ */
-.cel-overlay {
-  position: fixed; inset: 0; z-index: 9999;
-  background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: opacity 0.3s;
-}
-.cel-overlay.show { opacity: 1; pointer-events: all; }
-.cel-box {
-  background: linear-gradient(135deg, #fff9f0, #fffef8);
-  border-radius: 32px; padding: 44px 36px;
-  text-align: center; max-width: 360px; width: 90%;
-  box-shadow: 0 20px 80px rgba(0,0,0,0.25);
-  transform: scale(0.8);
-  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-.cel-overlay.show .cel-box { transform: scale(1); }
-.cel-emoji { font-size: 72px; display: block; margin-bottom: 12px; }
-.cel-title { font-family: 'Jua', sans-serif; font-size: 1.8rem; color: #333; margin-bottom: 6px; }
-.cel-msg { color: #777; font-size: 0.95rem; margin-bottom: 22px; }
-
-/* ════ FLOWER BLOOM PARTICLE ════ */
-.bloom-particle {
-  position: fixed; z-index: 9998; pointer-events: none; font-size: 24px;
-  animation: bloomFly 1.2s ease-out forwards;
-}
-@keyframes bloomFly {
-  0%   { transform: translate(0,0) scale(0.5) rotate(0deg); opacity: 1; }
-  100% { transform: translate(var(--dx), var(--dy)) scale(1.4) rotate(var(--dr)); opacity: 0; }
-}
-
-/* ════ CONFETTI ════ */
-.confetti {
-  position: fixed; z-index: 10000; pointer-events: none;
-  border-radius: 2px;
-  animation: confettiFall var(--dur, 2.5s) ease-in forwards;
-}
-@keyframes confettiFall {
-  0%  { transform: translateY(-10px) rotate(0deg); opacity: 1; }
-  100%{ transform: translateY(100vh) rotate(720deg); opacity: 0; }
-}
-
-/* ════ SYNC INDICATOR ════ */
-.sync-dot {
-  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-  background: #4caf50; animation: syncPulse 1.5s ease-in-out infinite;
-}
-@keyframes syncPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
-
-/* ════ RESPONSIVE ════ */
-@media(max-width:600px){
-  .content-wrap { padding: 14px 12px 70px; }
-  .admin-row { grid-template-columns: 1fr; }
-}
-
-/* ════ ANIMATIONS ════ */
-.fade-up { animation: fadeUp 0.5s ease both; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  /* 상단 네비게이션바 (흑요석 느낌) */
+  #nav-bar {
+    background-color: #1a1a1a;
+    color: #fff;
+    padding: 15px;
+    border-bottom: 4px solid #4a4a4a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 </style>
 </head>
 <body>
@@ -971,40 +340,43 @@ body.theme-kyeongjun .diary-body { color: #ffcdd2; }
 
 <script>
 /* ════════════════════════════════════════════
-   CONFIG & ROLES
+   마인크래프트 CONFIG & ROLES ⛏️
 ════════════════════════════════════════════ */
 const USERS = {
   admin: {
-    name:'누나', avatar:'👑', theme:'admin',
-    welcomeTitle:'관리자 모드 🌿', welcomeSub:'동생들의 정원을 감시...아니, 관리 중',
-    flower:'🌟', decoFn: renderAdminDeco,
+    name:'누나', avatar:'🐝', theme:'admin',
+    welcomeTitle:'관리자 서버 접속 🌿', welcomeSub:'꿀벌 누나의 서버 감시 중...',
+    flower:'🌻',
+    decoFn: renderAdminDeco,
   },
   kyeongjun: {
-    name:'경준', avatar:'🏎️', theme:'kyeongjun',
-    welcomeTitle:'안녕, 경준! 🏁', welcomeSub:'오늘도 풀 스로틀! VROOM 🔴',
-    flower:'🏎️', decoFn: renderKJDeco,
+    name:'경준', avatar:'🐺', theme:'kyeongjun',
+    welcomeTitle:'야생의 늑대 경준! 🌲', welcomeSub:'뼈다귀를 찾아 모험을 떠나자!',
+    flower:'🦴',
+    decoFn: renderKJDeco,
   },
   junho: {
-    name:'준호', avatar:'🧸', theme:'junho',
-    welcomeTitle:'안녕, 준호! ☁️', welcomeSub:'포근하고 행복한 하루 보내요 🧸',
-    flower:'🐻', decoFn: renderJHDeco,
+    name:'준호', avatar:'🐻‍❄️', theme:'junho',
+    welcomeTitle:'빙하의 북극곰 준호! ❄️', welcomeSub:'신선한 생선을 낚아볼까?',
+    flower:'🐟',
+    decoFn: renderJHDeco,
   },
   junsu: {
-    name:'준수', avatar:'🐹', theme:'junsu',
-    welcomeTitle:'안녕, 준수! 🌻', welcomeSub:'햄찌처럼 빠릿빠릿하게! 🌰',
-    flower:'🐹', decoFn: renderJSDeco,
+    name:'준수', avatar:'🐰', theme:'junsu',
+    welcomeTitle:'초원의 토끼 준수! 🌾', welcomeSub:'당근 캐기 딱 좋은 날이네!',
+    flower:'🥕',
+    decoFn: renderJSDeco,
   },
 };
 
 const BROTHERS = ['kyeongjun','junho','junsu'];
-const BCOLORS  = { kyeongjun:'#e53935', junho:'#29b6f6', junsu:'#ffa726' };
 
 let currentUser   = null;
 let fbListeners   = [];   
 let adminLoaded   = false;
 
 /* ════════════════════════════════════════════
-   DATABASE HELPERS (Firebase + Auto Cleanup)
+   DATABASE HELPERS & AUTO CLEANUP
 ════════════════════════════════════════════ */
 function lsGet(k)    { try{ return JSON.parse(localStorage.getItem(k)); }catch{ return null; } }
 function lsSet(k,v)  { try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
@@ -1032,7 +404,6 @@ function dbListen(path, cb) {
   return () => clearInterval(id);
 }
 
-// 💡 [기능 2] 완료된 항목 24시간 후 자동 삭제 로직
 async function cleanupTodos(uid, data) {
   const now = Date.now();
   const DAY_MS = 24 * 60 * 60 * 1000;
@@ -1045,7 +416,7 @@ async function cleanupTodos(uid, data) {
 }
 
 /* ════════════════════════════════════════════
-   NAVIGATION & SECURITY
+   NAVIGATION & STRICT SECURITY
 ════════════════════════════════════════════ */
 function goHome() {
   fbListeners.forEach(u => { if(typeof u === 'function') u(); });
@@ -1072,24 +443,23 @@ function goToUser(uid) {
 
   u.decoFn();
 
-  // 💡 [기능 5] 보안: 동생들은 관리 탭 접근 불가
   const tabContainer = document.querySelector('.nav-tabs');
   if (uid === 'admin') {
     tabContainer.innerHTML = `
-      <button class="tab-btn active" data-tab="admin-tab" onclick="switchTab('admin-tab')">📊 관리</button>
+      <button class="tab-btn active" data-tab="admin-tab" onclick="switchTab('admin-tab')">📊 서버 관리</button>
       <button class="tab-btn" data-tab="cal-tab" onclick="switchTab('cal-tab')">📅 달력</button>
     `;
     switchTab('admin-tab');
   } else {
     tabContainer.innerHTML = `
       <button class="tab-btn active" data-tab="home-tab" onclick="switchTab('home-tab')">🏠 홈</button>
-      <button class="tab-btn" data-tab="todo-tab" onclick="switchTab('todo-tab')">📋 할일</button>
-      <button class="tab-btn" data-tab="sticker-tab" onclick="switchTab('sticker-tab')">🌸 꽃밭</button>
-      <button class="tab-btn" data-tab="diary-tab" onclick="switchTab('diary-tab')">✏️ 일기</button>
-      <button class="tab-btn" data-tab="cal-tab" onclick="switchTab('cal-tab')">📅 달력</button>
+      <button class="tab-btn" data-tab="todo-tab" onclick="switchTab('todo-tab')">📋 퀘스트</button>
+      <button class="tab-btn" data-tab="sticker-tab" onclick="switchTab('sticker-tab')">🎒 인벤토리</button>
+      <button class="tab-btn" data-tab="diary-tab" onclick="switchTab('diary-tab')">✏️ 기록장</button>
     `;
     switchTab('home-tab');
   }
+  
   attachListeners(uid);
 }
 
@@ -1104,21 +474,22 @@ function attachListeners(uid) {
     const u2 = dbListen(`stickers/${uid}`, v => renderFlowerBed(v));
     const u3 = dbListen(`diaries/${uid}`,  v => renderDiaries(v));
     fbListeners.push(u1, u2, u3);
-    renderCalendar();
   }
 }
 
 function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
-  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === tabId));
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.remove('active');
+    if (p.id === tabId) p.classList.add('active');
+  });
   
   if (tabId === 'home-tab') renderHomeTab();
-  if (tabId === 'cal-tab') renderCalendar();
   if (tabId === 'admin-tab') renderAdminPanel();
 }
 
 /* ════════════════════════════════════════════
-   [기능 6] ADMIN PANEL (전체 목록 보기 포함)
+   ADMIN PANEL
 ════════════════════════════════════════════ */
 function renderAdminPanel() {
   const row = document.getElementById('admin-row');
@@ -1129,11 +500,11 @@ function renderAdminPanel() {
       <div class="admin-kid-card">
         <div class="admin-kid-title">${USERS[b].avatar} ${USERS[b].name} 관리</div>
         <div style="display:flex;gap:8px;margin-bottom:12px">
-          <input id="task-inp-${b}" class="g-input" placeholder="새로운 할일..." style="flex:1" onkeydown="if(event.key==='Enter')adminAddTask('${b}')">
+          <input id="task-inp-${b}" class="g-input" placeholder="새로운 퀘스트 부여..." style="flex:1" onkeydown="if(event.key==='Enter')adminAddTask('${b}')">
           <button class="btn btn-sm" onclick="adminAddTask('${b}')">추가</button>
         </div>
         <div id="admin-todo-full-${b}" class="admin-todo-list-container"></div>
-        <button class="btn btn-sm" style="margin-top:12px; width:100%; background:var(--t-grad); color:white" onclick="adminAwardFlower('${b}')">🌸 강제 꽃 선물</button>
+        <button class="btn btn-sm" style="margin-top:12px; width:100%; background-color:#5E9D34;" onclick="adminAwardFlower('${b}')">${USERS[b].flower} 특별 보상 지급</button>
       </div>`).join('');
   }
 
@@ -1143,8 +514,7 @@ function renderAdminPanel() {
         const el = document.getElementById(`admin-todo-full-${b}`);
         if (!el) return;
         const todos = data ? Object.entries(data).sort((a,b)=>b[1].created - a[1].created) : [];
-        if (todos.length === 0) { el.innerHTML = `<div class="todo-empty">목록 비어있음</div>`; return; }
-        // 💡 [기능 6] 여태 적은 모든 목록(미완료+24시간 이내 완료) 노출
+        if (todos.length === 0) { el.innerHTML = `<div class="todo-empty">퀘스트 없음</div>`; return; }
         el.innerHTML = `<ul class="todo-list">${
           todos.map(([key,t]) => `
             <li class="todo-item ${t.done?'done':''}" style="padding:6px 8px; margin-bottom:4px; font-size:0.85rem">
@@ -1168,97 +538,66 @@ async function adminAddTask(uid) {
 }
 
 /* ════════════════════════════════════════════
-   [기능 3] & [기능 4] RANKING & REWARDS
+   BROTHER'S HOME TAB
 ════════════════════════════════════════════ */
-async function toggleTodo(key, uid, newDone) {
-  const completedAt = newDone ? Date.now() : null;
-  await dbSet(`todos/${uid}/${key}/done`, newDone);
-  await dbSet(`todos/${uid}/${key}/completedAt`, completedAt);
-
-  if (newDone) {
-    playSound(uid); bloomEffect(event);
-    showCel('🌸', '완료!', `잘했어요!`);
-    
-    // 💡 [기능 3] 할 일 3개 완료 시 꽃 1개 자동 지급
-    const snap = await window.fbGet?.(`todos/${uid}`);
-    const all = snap ? Object.values(snap.val() || {}) : Object.values(lsGet(`todos_${uid}`) || {});
-    const doneCount = all.filter(t => t.done).length;
-    
-    if (doneCount > 0 && doneCount % 3 === 0) {
-      await awardStickerSilent(uid);
-      showCel('🎁', '보너스 꽃!', `3개를 완료해서 꽃 1개가 피어났어요!`);
-    }
-  }
-}
-
-async function awardStickerSilent(uid) {
-  const today = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'-').replace('.','');
-  await dbPush(`stickers/${uid}`, { date: today, ts: Date.now() });
-}
-
-async function adminAwardFlower(uid) {
-  await awardStickerSilent(uid);
-  showCel('🌸', '꽃 선물!', `${USERS[uid].name}에게 꽃을 심었어요!`);
-  spawnConfetti(15);
-}
-
-// 💡 [기능 4] 랭킹 시스템 렌더링
 function renderHomeTab() {
   const wrap = document.getElementById('home-dynamic');
   if (!wrap) return;
 
   wrap.innerHTML = `
-    <div class="card fade-up"><div class="card-head">🏆 정원 랭킹</div><div id="rank-list"></div></div>
-    <div class="card fade-up"><div class="card-head">🌸 나의 꽃밭</div><div id="home-sticker-snippet"></div></div>
-    <div class="card fade-up"><div class="card-head">📋 최근 할일</div><div id="home-todo-snippet"></div></div>
+    <div class="card fade-up"><div class="card-head">🏆 서버 랭킹</div><div id="home-rank-snippet"></div></div>
+    <div class="card fade-up"><div class="card-head">🎒 내 인벤토리</div><div id="home-sticker-snippet"></div></div>
+    <div class="card fade-up"><div class="card-head">📋 남은 퀘스트</div><div id="home-todo-snippet"></div></div>
   `;
 
   const stickerCounts = {};
   BROTHERS.forEach(b => {
     const u = dbListen(`stickers/${b}`, data => {
       stickerCounts[b] = data ? Object.keys(data).length : 0;
-      updateRankUI(stickerCounts);
+      const el = document.getElementById('home-rank-snippet');
+      if (!el) return;
+      const sorted = Object.entries(stickerCounts).sort((x,y) => y[1] - x[1]);
+      el.innerHTML = sorted.map(([kid, count], i) => `
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:2px solid var(--mc-border-dark); font-size:0.95rem">
+          <span>${i===0?'💎':'🔹'.replace('🔹', i===1?'🥇':'🥈')} ${USERS[kid].avatar} ${USERS[kid].name}</span>
+          <span style="font-weight:bold;">${count}${USERS[kid].flower}</span>
+        </div>
+      `).join('');
     });
     fbListeners.push(u);
   });
 
-  // 본인 정보 리스너
   const u2 = dbListen(`stickers/${currentUser}`, v => {
     const count = v ? Object.keys(v).length : 0;
     const innerSnippet = document.getElementById('home-sticker-snippet');
-    if (innerSnippet) innerSnippet.innerHTML = `<div style="font-size:1.5rem; font-weight:bold; color:var(--t-main)">${count}개</div><div style="font-size:0.8rem; opacity:0.6">꽃이 피어났어요!</div>`;
+    if (innerSnippet) innerSnippet.innerHTML = `
+      <div style="font-size:1.5rem; font-weight:bold; text-align:center;">${USERS[currentUser].flower} x ${count}</div>`;
   });
+  
   const u3 = dbListen(`todos/${currentUser}`, v => {
-    const todos = v ? Object.entries(v).slice(0,3) : [];
+    const todos = v ? Object.entries(v) : [];
+    const done  = todos.filter(([,t])=>t.done).length;
     const homeTodo = document.getElementById('home-todo-snippet');
-    if (homeTodo) homeTodo.innerHTML = `<ul class="todo-list">${todos.map(([k,t])=>`<li class="todo-item ${t.done?'done':''}" style="padding:8px">${t.done?'✅':'⬜'} ${escHtml(t.text)}</li>`).join('') || '할일 없음'}</ul>`;
+    if (homeTodo) {
+      const recent = todos.slice(0,3).map(([key,t]) => `
+        <li class="todo-item ${t.done?'done':''}" style="padding:10px">
+          <button class="check-btn ${t.done?'done':''}" onclick="toggleTodo('${key}','${currentUser}',${!t.done})" style="width:24px;height:24px;font-size:12px">${t.done?'✓':''}</button>
+          <span class="todo-text" style="font-size:0.88rem">${escHtml(t.text)}</span>
+        </li>`).join('');
+      homeTodo.innerHTML = `<div style="font-weight:700;margin-bottom:8px">진척도: ${done}/${todos.length}</div><ul class="todo-list">${recent || `<div class="todo-empty">퀘스트가 없습니다!</div>`}</ul>`;
+    }
   });
   fbListeners.push(u2, u3);
 }
 
-function updateRankUI(counts) {
-  const el = document.getElementById('rank-list');
-  if (!el) return;
-  const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
-  el.innerHTML = sorted.map(([uid, count], i) => `
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px; border-bottom:1px solid #eee">
-      <div style="display:flex; align-items:center; gap:10px">
-        <span style="font-weight:bold; color:${i===0?'#ffd700':'#999'}">${i+1}위</span>
-        <span>${USERS[uid].avatar} ${USERS[uid].name}</span>
-      </div>
-      <div style="font-weight:bold">${count}🌸</div>
-    </div>
-  `).join('');
-}
-
 /* ════════════════════════════════════════════
-   EXISTING FUNCTIONS (UNCHANGED BUT RE-LINKED)
+   TODOS, REWARDS & STICKERS
 ════════════════════════════════════════════ */
 function renderTodos(data) {
   const list = document.getElementById('todo-list');
   if (!list) return;
   const todos = data ? Object.entries(data).sort((a,b)=>a[1].done - b[1].done) : [];
-  if (todos.length === 0) { list.innerHTML = `<div class="todo-empty">🌱 할 일이 없어요!</div>`; return; }
+  if (todos.length === 0) { list.innerHTML = `<div class="todo-empty">조용하네요...</div>`; return; }
   list.innerHTML = todos.map(([key, t]) => `
     <li class="todo-item ${t.done ? 'done' : ''}">
       <button class="check-btn ${t.done ? 'done' : ''}" onclick="toggleTodo('${key}','${currentUser}',${!t.done})">${t.done ? '✓' : ''}</button>
@@ -1273,21 +612,51 @@ async function addTodo(uid, text) {
 }
 async function deleteTodo(key, uid) { await dbRemove(`todos/${uid}/${key}`); }
 
+async function toggleTodo(key, uid, newDone) {
+  const completedAt = newDone ? Date.now() : null;
+  await dbSet(`todos/${uid}/${key}/done`, newDone);
+  await dbSet(`todos/${uid}/${key}/completedAt`, completedAt);
+
+  if (newDone) {
+    playSound(uid); bloomEffect(event);
+    showCel('경험치+', '퀘스트 완료!', `잘했어요!`);
+    
+    const snap = await window.fbGet?.(`todos/${uid}`);
+    const all = snap ? Object.values(snap.val() || {}) : Object.values(lsGet(`todos_${uid}`) || {});
+    const doneCount = all.filter(t => t.done).length;
+    
+    if (doneCount > 0 && doneCount % 3 === 0) {
+      await awardStickerSilent(uid);
+      showCel('🎁', '아이템 획득!', `3콤보 달성! ${USERS[uid].flower} 1개를 얻었습니다!`);
+    }
+  }
+}
+
+async function awardStickerSilent(uid) {
+  const today = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'-').replace('.','');
+  await dbPush(`stickers/${uid}`, { date: today, ts: Date.now() });
+}
+
+async function adminAwardFlower(uid) {
+  await awardStickerSilent(uid);
+  showCel('🎁', '관리자 보상!', `${USERS[uid].name}에게 ${USERS[uid].flower} 아이템을 지급했습니다!`);
+}
+
 function renderFlowerBed(data) {
   const grid = document.getElementById('flower-grid');
   const countEl = document.getElementById('sticker-count');
   if (!grid) return;
   const stickers = data ? Object.entries(data) : [];
   if (countEl) countEl.textContent = stickers.length;
-  const flowers = ['🌸','🌻','🌺','🌷','🌼'];
-  grid.innerHTML = stickers.map(([,s], i) => `<div class="flower-item"><span class="flower-emoji">${flowers[i % flowers.length]}</span><span class="flower-date">${s.date}</span></div>`).join('');
+  const myItem = USERS[currentUser].flower; 
+  grid.innerHTML = stickers.map(([,s]) => `<div class="flower-item"><span class="flower-emoji">${myItem}</span><div style="font-size:0.6rem; color:#fff; margin-top:5px;">${s.date}</div></div>`).join('');
 }
 
 function renderDiaries(data) {
   const wrap = document.getElementById('diary-list');
   if (!wrap) return;
   const entries = data ? Object.entries(data).sort((a,b) => b[1].ts - a[1].ts) : [];
-  wrap.innerHTML = entries.map(([,d]) => `<div class="diary-entry"><div class="diary-date">📅 ${d.date}</div><div class="diary-body">${escHtml(d.text)}</div></div>`).join('') || '<p style="text-align:center; opacity:0.5; padding:20px">일기를 써보세요 ✏️</p>';
+  wrap.innerHTML = entries.map(([,d]) => `<div class="diary-entry" style="background:#fff; border:2px solid #555; padding:10px; margin-bottom:10px;"><div style="font-weight:bold; border-bottom:1px dashed #ccc; padding-bottom:5px;">📅 ${d.date}</div><div style="margin-top:5px;">${escHtml(d.text)}</div></div>`).join('') || '<p style="text-align:center;">기록이 없습니다.</p>';
 }
 
 async function saveDiary() {
@@ -1295,41 +664,60 @@ async function saveDiary() {
   if (!inp.value.trim()) return;
   const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
   await dbPush(`diaries/${currentUser}`, { text: inp.value, date: today, ts: Date.now() });
-  inp.value = ''; showCel('📓', '저장 완료!', '일기를 저장했어요.');
-}
-
-async function renderCalendar() {
-  const grid = document.getElementById('cal-grid');
-  if (!grid) return;
-  const now = new Date(), year = now.getFullYear(), month = now.getMonth();
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-  const firstDay = new Date(year, month, 1).getDay();
-  let html = ['일','월','화','수','목','금','토'].map(d => `<div class="cal-day-label">${d}</div>`).join('');
-  for (let i=0; i<firstDay; i++) html += `<div class="cal-cell"></div>`;
-  for (let d=1; d<=daysInMonth; d++) {
-    const isToday = d === now.getDate();
-    html += `<div class="cal-cell ${isToday?'today':''}"><span class="cal-num">${d}</span></div>`;
-  }
-  grid.innerHTML = html;
+  inp.value = ''; showCel('📓', '저장 완료!', '서버 로그에 기록되었습니다.');
 }
 
 /* ════════════════════════════════════════════
-   VISUALS & UTILS
+   VISUALS & ANIMATIONS (마크 몹 컨셉)
 ════════════════════════════════════════════ */
-function renderAdminDeco() { document.getElementById('scene-bg').innerHTML = `<div class="admin-bg-effect">👑</div>`; }
-function renderKJDeco() { document.getElementById('scene-bg').innerHTML = `<div class="kj-car">🏎️</div>`; }
-function renderJHDeco() { document.getElementById('scene-bg').innerHTML = `<div class="jh-plush">🧸</div>`; }
-function renderJSDeco() { document.getElementById('scene-bg').innerHTML = `<div class="js-hamster">🐹</div>`; }
+function renderAdminDeco() { document.getElementById('scene-bg').innerHTML = `<div style="font-size:50px; position:absolute; bottom:20px; right:20px;">🐝🌻</div>`; }
+function renderKJDeco() { document.getElementById('scene-bg').innerHTML = `<div style="font-size:50px; position:absolute; bottom:20px; right:20px;">🐺🌲</div>`; }
+function renderJHDeco() { document.getElementById('scene-bg').innerHTML = `<div style="font-size:50px; position:absolute; bottom:20px; right:20px;">🐻‍❄️🧊</div>`; }
+function renderJSDeco() { document.getElementById('scene-bg').innerHTML = `<div style="font-size:50px; position:absolute; bottom:20px; right:20px;">🐰🌾</div>`; }
 
 function showCel(emoji, title, msg) { document.getElementById('cel-emoji').textContent=emoji; document.getElementById('cel-title').textContent=title; document.getElementById('cel-msg').textContent=msg; document.getElementById('cel-overlay').classList.add('show'); }
 function closeCel() { document.getElementById('cel-overlay').classList.remove('show'); }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function spawnConfetti(n=30) { /* 기존과 동일 */ }
-function bloomEffect(e) { /* 기존과 동일 */ }
-let _ac; function getAC() { return _ac || (_ac = new (window.AudioContext||window.webkitAudioContext)()); }
-function playSound(uid) { /* 소리 로직 */ }
+function bloomEffect(e) {
+  const x = e?.clientX ?? window.innerWidth/2, y = e?.clientY ?? window.innerHeight/2;
+  const myItem = USERS[currentUser].flower;
+  for (let i=0; i<6; i++) {
+    const el = document.createElement('div'); el.className = 'bloom-particle'; el.textContent = myItem;
+    el.style.left=x+'px'; el.style.top=y+'px';
+    const a=(i/6)*Math.PI*2, d=40+Math.random()*40;
+    el.style.setProperty('--dx', Math.cos(a)*d+'px'); el.style.setProperty('--dy', Math.sin(a)*d+'px'); el.style.setProperty('--dr', (Math.random()*360)+'deg');
+    el.style.animationDelay=(i*0.04)+'s'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1500);
+  }
+}
 
-// 초기 실행
+// 💡 마크 경험치 구슬 사운드 (XP Orb Sound)
+let _ac; function getAC() { return _ac || (_ac = new (window.AudioContext||window.webkitAudioContext)()); }
+function playSound(uid) { 
+  try { 
+    const ac = getAC(); 
+    const o = ac.createOscillator();
+    const g = ac.createGain(); 
+    o.connect(g); 
+    g.connect(ac.destination); 
+    
+    // 마크 경험치 특유의 맑고 높은 '띠링' 소리 (사인파)
+    o.type = 'sine'; 
+    // 피치를 랜덤하게 조절해서 연달아 먹을 때 다르게 들리도록
+    const pitch = 800 + (Math.random() * 400); 
+    o.frequency.setValueAtTime(pitch, ac.currentTime); 
+    
+    // 소리가 튕기듯 짧게 나도록 볼륨(gain) 조절
+    g.gain.setValueAtTime(0, ac.currentTime);
+    g.gain.linearRampToValueAtTime(0.3, ac.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
+    
+    o.start(ac.currentTime); 
+    o.stop(ac.currentTime + 0.3);
+  } catch(e) {
+    console.log("오디오 재생 실패", e);
+  } 
+}
+
 goHome();
 </script>
 </body>
