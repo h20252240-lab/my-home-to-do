@@ -83,7 +83,6 @@
     --mc-border-light: #ffffff;
     --mc-border-dark: #555555;
     --mc-text: #111111;
-    --t-main: #388e3c;
   }
 
   body {
@@ -91,78 +90,72 @@
     background-color: var(--mc-bg);
     color: var(--mc-text);
     margin: 0; padding: 0;
-    /* 도트 이미지(이모지) 깨짐 방지 */
     image-rendering: pixelated; 
   }
 
-  /* 마인크래프트 인벤토리 창 느낌의 카드 */
-  .card, .panel, .admin-kid-card {
+  /* 🚨 1. 핵심 뼈대 복구: 화면 숨기고 보여주기 (이게 날아가서 고장났던 겁니다!) */
+  #home-screen, #user-screen { display: none; }
+  #home-screen.active, #user-screen.active { display: block; }
+  
+  .panel { display: none; }
+  .panel.active { display: block; }
+  /* -------------------------------------------------------- */
+
+  /* 홈 화면 프로필 선택 뼈대 */
+  .profile-grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; padding: 30px; }
+  .profile-card { 
     background-color: var(--mc-ui);
     border: 4px solid;
     border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light);
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+    padding: 20px; text-align: center; cursor: pointer; width: 130px;
   }
+  .profile-card:active { border-color: var(--mc-border-dark) var(--mc-border-light) var(--mc-border-light) var(--mc-border-dark); }
+  .profile-avatar { font-size: 3rem; margin-bottom: 10px; }
+
+  /* 네비게이션 & 탭 뼈대 */
+  #nav-bar { background-color: #1a1a1a; color: #fff; padding: 15px; border-bottom: 4px solid #4a4a4a; display: flex; align-items: center; justify-content: space-between; }
+  .nav-tabs { display: flex; gap: 5px; padding: 10px; background: #555; overflow-x: auto; }
+  
+  /* 마인크래프트 UI 스타일 (상자 느낌) */
+  .card, .admin-kid-card {
+    background-color: var(--mc-ui);
+    border: 4px solid;
+    border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light);
+    padding: 16px; margin: 15px; box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+  }
+  .card-head { font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid var(--mc-border-dark); padding-bottom: 5px; }
 
   /* 네모 반듯한 마크식 버튼 */
-  button, .btn {
-    font-family: 'Galmuri11', sans-serif;
-    background-color: #7A7A7A;
-    color: white;
-    border: 4px solid;
-    border-color: #AFAFAF #3B3B3B #3B3B3B #AFAFAF;
-    padding: 8px 12px;
-    cursor: pointer;
-    text-shadow: 2px 2px 0px #3B3B3B;
+  button, .btn, .tab-btn {
+    font-family: 'Galmuri11', sans-serif; background-color: #7A7A7A; color: white;
+    border: 4px solid; border-color: #AFAFAF #3B3B3B #3B3B3B #AFAFAF;
+    padding: 8px 12px; cursor: pointer; text-shadow: 2px 2px 0px #3B3B3B;
   }
-  button:active, .btn:active {
-    border-color: #3B3B3B #AFAFAF #AFAFAF #3B3B3B;
-  }
-  .tab-btn.active {
-    background-color: #5E9D34; /* 잔디블록 색상 */
-    border-color: #87C65D #315C16 #315C16 #87C65D;
-  }
+  button:active, .btn:active, .tab-btn:active { border-color: #3B3B3B #AFAFAF #AFAFAF #3B3B3B; }
+  .tab-btn.active { background-color: #5E9D34; border-color: #87C65D #315C16 #315C16 #87C65D; }
 
   /* 입력창 (마크 채팅창 느낌) */
-  input, .g-input {
-    font-family: 'Galmuri11', sans-serif;
-    background-color: #000;
-    color: #fff;
-    border: 2px solid #a0a0a0;
-    padding: 8px;
-  }
+  input, .g-input { font-family: 'Galmuri11', sans-serif; background-color: #000; color: #fff; border: 2px solid #a0a0a0; padding: 10px; width: 100%; box-sizing: border-box; }
 
-  /* 리스트 스타일 */
-  .todo-item {
-    background-color: rgba(255,255,255,0.5);
-    border: 2px solid #888;
-    margin-bottom: 8px;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-  }
+  /* 리스트 및 인벤토리(그리드) */
+  .todo-list { list-style: none; padding: 0; margin: 0; }
+  .todo-item { background-color: rgba(255,255,255,0.5); border: 2px solid #888; margin-bottom: 8px; padding: 8px; display: flex; align-items: center; gap: 10px; }
+  .todo-item.done { opacity: 0.6; text-decoration: line-through; }
   
-  /* 아이템 그리드 (인벤토리 슬롯 느낌) */
-  .flower-item {
-    background-color: #8b8b8b;
-    border: 4px solid;
-    border-color: #3B3B3B #ffffff #ffffff #3B3B3B;
-    padding: 10px;
-    text-align: center;
-    font-size: 2rem;
-  }
+  #flower-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; }
+  .flower-item { background-color: #8b8b8b; border: 4px solid; border-color: #3B3B3B #ffffff #ffffff #3B3B3B; padding: 10px; text-align: center; font-size: 2rem; width: 60px; }
 
-  /* 상단 네비게이션바 (흑요석 느낌) */
-  #nav-bar {
-    background-color: #1a1a1a;
-    color: #fff;
-    padding: 15px;
-    border-bottom: 4px solid #4a4a4a;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  /* 알림창(모달) 뼈대 복구 */
+  #cel-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; }
+  #cel-overlay.show { display: flex; }
+  .cel-box { background: var(--mc-ui); border: 4px solid; border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light); padding: 30px; text-align: center; }
+  
+  /* 마크식 프로필 배경색 (낮/밤/지형 느낌) */
+  #scene-bg { position: relative; height: 120px; overflow: hidden; background: #87CEEB; border: 4px solid var(--mc-border-dark); margin: 15px; }
+  .theme-admin #scene-bg { background: #E6C200; }  /* 누나(꿀벌) - 노란빛 */
+  .theme-kyeongjun #scene-bg { background: #3B5323; } /* 경준(늑대) - 짙은 숲 */
+  .theme-junho #scene-bg { background: #B0E0E6; } /* 준호(북극곰) - 얼음 */
+  .theme-junsu #scene-bg { background: #7CFC00; } /* 준수(토끼) - 잔디밭 */
 </style>
 </head>
 <body>
