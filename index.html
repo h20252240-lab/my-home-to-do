@@ -3,26 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>우리 가족 정원 🌸</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<title>마인크래프트 가족 서버 ⛏️</title>
+<link href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css" rel="stylesheet">
 
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, set, push, onValue, update, remove, get }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  /* ════════════════════════════════════════════
-     🔥 FIREBASE CONFIG — PASTE YOUR CONFIG HERE
-     ════════════════════════════════════════════
-     1. Go to https://console.firebase.google.com
-     2. Create a project → "우리가족정원" (or any name)
-     3. Click "Add app" → Web (</>)
-     4. Copy the firebaseConfig object and replace below
-     5. In console: Build → Realtime Database → Create database
-        → Start in TEST MODE → Copy the database URL
-     ════════════════════════════════════════════ */
- const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "AIzaSyDKGfF4ziEzUlqEACTJ0bPmiYRcbn9vBtM",
     authDomain: "konnngs-dfd9d.firebaseapp.com",
     databaseURL: "https://konnngs-dfd9d-default-rtdb.firebaseio.com",
@@ -38,7 +27,6 @@
   try {
     app = initializeApp(firebaseConfig);
     db  = getDatabase(app);
-    // Quick connection test
     const testRef = ref(db, '.info/connected');
     onValue(testRef, (snap) => {
       isFirebaseReady = snap.val() === true;
@@ -54,12 +42,11 @@
   function updateConnectionBadge(online) {
     const b = document.getElementById('conn-badge');
     if (!b) return;
-    b.textContent = online ? '🟢 실시간 연결' : '🟡 오프라인 모드';
+    b.textContent = online ? '🟢 서버 연결됨' : '🟡 오프라인 모드';
     b.style.background = online ? 'rgba(76,175,80,0.2)' : 'rgba(255,193,7,0.2)';
-    b.style.color = online ? '#2e7d32' : '#f57f17';
+    b.style.color = online ? '#5E9D34' : '#f57f17';
   }
 
-  /* ═══ FIREBASE API ═══ */
   window.fbSet    = (path, data) => db ? set(ref(db, path), data)      : Promise.resolve();
   window.fbPush   = (path, data) => db ? push(ref(db, path), data)     : Promise.resolve();
   window.fbUpdate = (path, data) => db ? update(ref(db, path), data)   : Promise.resolve();
@@ -75,8 +62,6 @@
 </script>
 
 <style>
-  @import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
-
   :root {
     --mc-bg: #8b8b8b;
     --mc-ui: #c6c6c6;
@@ -96,17 +81,19 @@
   /* 화면 숨기고 보여주기 */
   #home-screen, #user-screen { display: none; }
   #home-screen.active, #user-screen.active { display: block; }
-  
   .panel { display: none; }
   .panel.active { display: block; }
 
-  /* 🧱 [기능 3] 시작 화면: 마크 인벤토리(그리드) UI 구현 */
-  #home-screen { padding: 30px; }
+  /* 연결 배지 */
+  #conn-badge { position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; color: white; z-index: 1000; font-size: 12px; border: 2px solid #555; }
+
+  /* 🧱 시작 화면: 마크 인벤토리(그리드) UI 구현 */
+  #home-screen { padding: 30px; display: flex; align-items: center; min-height: 100vh; box-sizing: border-box; }
   .mc-inventory-ui { 
     background-color: var(--mc-ui);
     border: 4px solid;
     border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light);
-    width: 300px; margin: 0 auto; padding: 20px;
+    width: 340px; margin: 0 auto; padding: 20px;
   }
   .mc-title-area { text-align: center; margin-bottom: 20px; font-size: 1.2rem; font-weight: bold; }
   .mc-subtitle { font-size: 0.8rem; opacity: 0.6; }
@@ -116,17 +103,21 @@
     background-color: #8b8b8b; /* 인벤토리 슬롯 색 */
     border: 4px solid;
     border-color: #3B3B3B #ffffff #ffffff #3B3B3B; /* 마크 테두리 */
-    padding: 10px; text-align: center; cursor: pointer; transition: transform 0.1s;
+    padding: 10px 5px; text-align: center; cursor: pointer; transition: transform 0.1s;
   }
   .mc-slot:active { transform: scale(0.9); }
   .mc-pixel-face { font-size: 2.5rem; image-rendering: pixelated; } /* 픽셀 얼굴용 */
-  .mc-label { font-size: 0.75rem; margin-top: 5px; }
+  .mc-label { font-size: 0.75rem; margin-top: 5px; color: white; text-shadow: 1px 1px 0 #000; }
 
   /* 네비게이션 & 탭 */
   #nav-bar { background-color: #1a1a1a; color: #fff; padding: 15px; border-bottom: 4px solid #4a4a4a; display: flex; align-items: center; justify-content: space-between; }
-  .nav-tabs { display: flex; gap: 5px; padding: 10px; background: #555; overflow-x: auto; }
+  .nav-tabs { display: flex; gap: 5px; padding: 10px; background: #555; overflow-x: auto; scrollbar-width: none; }
+  .nav-tabs::-webkit-scrollbar { display: none; }
   
-  /* 마 UI 스타일 (상자 느낌) */
+  /* 콘텐츠 영역 */
+  .content-wrap { max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
+
+  /* 마크 UI 스타일 (상자 느낌) */
   .card, .admin-kid-card {
     background-color: var(--mc-ui);
     border: 4px solid;
@@ -139,27 +130,31 @@
   button, .btn, .tab-btn {
     font-family: 'Galmuri11', sans-serif; background-color: #7A7A7A; color: white;
     border: 4px solid; border-color: #AFAFAF #3B3B3B #3B3B3B #AFAFAF;
-    padding: 8px 12px; cursor: pointer; text-shadow: 2px 2px 0px #3B3B3B;
+    padding: 8px 12px; cursor: pointer; text-shadow: 2px 2px 0px #3B3B3B; white-space: nowrap;
   }
   button:active, .btn:active, .tab-btn:active { border-color: #3B3B3B #AFAFAF #AFAFAF #3B3B3B; }
   .tab-btn.active { background-color: #5E9D34; border-color: #87C65D #315C16 #315C16 #87C65D; }
 
   /* 입력창 (마크 채팅창 느낌) */
-  input, .g-input { font-family: 'Galmuri11', sans-serif; background-color: #000; color: #fff; border: 2px solid #a0a0a0; padding: 10px; width: 100%; box-sizing: border-box; }
+  input, .g-input, textarea { font-family: 'Galmuri11', sans-serif; background-color: #000; color: #fff; border: 2px solid #a0a0a0; padding: 10px; width: 100%; box-sizing: border-box; outline: none; }
+  textarea { resize: vertical; }
 
   /* 리스트 및 인벤토리(그리드) */
   .todo-list { list-style: none; padding: 0; margin: 0; }
   .todo-item { background-color: rgba(255,255,255,0.5); border: 2px solid #888; margin-bottom: 8px; padding: 8px; display: flex; align-items: center; gap: 10px; }
   .todo-item.done { opacity: 0.6; text-decoration: line-through; }
+  .check-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; padding: 0; font-size: 14px; }
+  .del-btn { background-color: #e53935; border-color: #ff5252 #b71c1c #b71c1c #ff5252; padding: 4px 8px; font-size: 12px; }
+  .todo-text { flex: 1; font-size: 0.9rem; }
   
-  #flower-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; }
+  #flower-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0; }
   /* 인벤토리 슬롯 형식의 아이템 */
-  .flower-item { background-color: #8b8b8b; border: 4px solid; border-color: #3B3B3B #ffffff #ffffff #3B3B3B; padding: 10px; text-align: center; font-size: 2rem; width: 60px; }
+  .flower-item { background-color: #8b8b8b; border: 4px solid; border-color: #3B3B3B #ffffff #ffffff #3B3B3B; padding: 10px; text-align: center; font-size: 2rem; width: 60px; display: flex; flex-direction: column; align-items: center; }
 
   /* 알림창(모달) 뼈대 복구 */
   #cel-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; }
   #cel-overlay.show { display: flex; }
-  .cel-box { background: var(--mc-ui); border: 4px solid; border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light); padding: 30px; text-align: center; }
+  .cel-box { background: var(--mc-ui); border: 4px solid; border-color: var(--mc-border-light) var(--mc-border-dark) var(--mc-border-dark) var(--mc-border-light); padding: 30px; text-align: center; max-width: 300px; }
   
   /* 마크식 프로필 배경색 (배경색 심플화) */
   #scene-bg { position: relative; height: 120px; overflow: hidden; border: 4px solid var(--mc-border-dark); margin: 15px; }
@@ -168,322 +163,287 @@
   .theme-junho #scene-bg { background: #B0E0E6; } 
   .theme-junsu #scene-bg { background: #7CFC00; } 
   
-  /* 💡 [기능 2, 4] 동물 픽셀 이미지화 및 배경 제거 */
-  .mc-pixelated-mobs { position: absolute; font-size: 4rem; bottom: 10px; right: 10px; image-rendering: pixelated; }
+  /* 동물 픽셀 이미지화 및 배경 제거 */
+  .mc-pixelated-mobs { position: absolute; font-size: 4rem; bottom: 10px; right: 10px; image-rendering: pixelated; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
   
-  /* 💡 경험치 띠링 애니메이션 (블록 통통) */
+  /* 경험치 띠링 애니메이션 (블록 통통) */
   @keyframes bloomParticle { 0% { transform: scale(1); } 50% { transform: scale(1.5) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
-  .bloom-particle { font-size: 2rem; position: fixed; animation: bloomParticle 0.5s ease; pointer-events: none; }
+  .bloom-particle { font-size: 2rem; position: fixed; animation: bloomParticle 0.5s ease; pointer-events: none; z-index: 9998; text-shadow: 2px 2px 0 #000; }
+
+  .cal-day-label { text-align: center; font-size: 0.8rem; font-weight: bold; padding: 5px 0; }
+  .cal-cell { aspect-ratio: 1; border: 2px solid #888; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.3); }
+  .cal-cell.today { border-color: #388e3c; background: rgba(76,175,80,0.3); font-weight: bold; }
 </style>
 </head>
 <body>
 
-<!-- Connection badge -->
 <div id="conn-badge">🟡 연결 중...</div>
 
-<!-- ════════════════════════════════════
-     HOME GARDEN SCREEN
-════════════════════════════════════ -->
+<div id="home-screen" class="screen active">
+  <div class="mc-inventory-ui">
+    <div class="mc-title-area">
+      Minecraft World<br>
+      <span class="mc-subtitle">접속할 플레이어를 선택하세요</span>
+    </div>
+    
+    <div class="mc-profile-grid">
+      <div class="mc-slot" onclick="goToUser('admin')">
+        <span class="mc-pixel-face">🐝</span>
+        <div class="mc-label">누나</div>
+      </div>
+      <div class="mc-slot" onclick="goToUser('kyeongjun')">
+        <span class="mc-pixel-face">🐺</span>
+        <div class="mc-label">경준</div>
+      </div>
+      <div class="mc-slot" onclick="goToUser('junho')">
+        <span class="mc-pixel-face">🐻‍❄️</span>
+        <div class="mc-label">준호</div>
+      </div>
+      <div class="mc-slot" onclick="goToUser('junsu')">
+        <span class="mc-pixel-face">🐰</span>
+        <div class="mc-label">준수</div>
+      </div>
+      <div class="mc-slot"></div>
+      <div class="mc-slot"></div>
+      <div class="mc-slot"></div>
+      <div class="mc-slot"></div>
+      <div class="mc-slot"></div>
+    </div>
+  </div>
+</div>
+
+<div id="user-screen" class="screen">
+  
+  <div id="nav-bar">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span id="nav-avatar" style="font-size: 1.5rem;"></span>
+      <span id="nav-name" style="font-size: 1.2rem; font-weight: bold;"></span>
+    </div>
+    <button class="btn btn-sm" onclick="goHome()">서버 나가기</button>
+  </div>
+
+  <div id="scene-bg"></div>
+  
+  <div style="padding: 0 15px;">
+    <h2 id="welcome-title" style="margin: 0; font-size: 1.3rem;"></h2>
+    <p id="welcome-sub" style="margin: 5px 0 10px 0; font-size: 0.9rem; opacity: 0.7;"></p>
+  </div>
+
+  <div class="nav-tabs" id="tab-container">
+    </div>
+
+  <div class="content-wrap">
+    
+    <div id="home-tab" class="panel active">
+      <div id="home-dynamic"></div>
+    </div>
+
+    <div id="admin-tab" class="panel">
+      <div class="card">
+        <div class="card-head">🌿 서버 관리 콘솔</div>
+        <div id="admin-row"></div>
+      </div>
+    </div>
+
+    <div id="todo-tab" class="panel">
+      <div class="card">
+        <div class="card-head">📋 남은 퀘스트</div>
+        <ul id="todo-list" class="todo-list"></ul>
+      </div>
+    </div>
+
+    <div id="sticker-tab" class="panel">
+      <div class="card">
+        <div class="card-head">🎒 내 인벤토리 (<span id="sticker-count">0</span>)</div>
+        <div id="flower-grid"></div>
+      </div>
+    </div>
+
+    <div id="diary-tab" class="panel">
+      <div class="card">
+        <div class="card-head">✏️ 서버 로그 기록</div>
+        <textarea id="diary-input" rows="3" placeholder="오늘 퀘스트 하면서 있었던 일을 적어보세요."></textarea>
+        <button class="btn" style="margin-top:10px; width:100%;" onclick="saveDiary()">기록 저장</button>
+        <div id="diary-list" style="margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <div id="cal-tab" class="panel">
+      <div class="card">
+        <div class="card-head">📅 서버 접속일지</div>
+        <div id="cal-grid" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; text-align:center;"></div>
+      </div>
+    </div>
+
+  </div> </div> <div id="cel-overlay" onclick="closeCel()">
+  <div class="cel-box" onclick="event.stopPropagation()">
+    <div id="cel-emoji" style="font-size: 3rem; margin-bottom: 10px; image-rendering:pixelated;"></div>
+    <h2 id="cel-title" style="margin:0 0 10px 0;"></h2>
+    <p id="cel-msg" style="margin-bottom: 20px; font-size: 0.9rem;"></p>
+    <button onclick="closeCel()">확인</button>
+  </div>
+</div>
+
 <script>
-/* ════════════════════════════════════════════
-   마인크래프트 CONFIG & ROLES (V6 진짜 최종) ⛏️
-════════════════════════════════════════════ */
 const USERS = {
-  admin: {
-    name:'누나', avatar:'🐝', theme:'admin',
-    welcomeTitle:'관리자 서버 접속 🌿', welcomeSub:'꿀벌 누나의 서버 감시 중...',
-    // 💡 픽셀 벌/🌻 아이템 컨셉
-    flower:'🌻', 
-    decoFn: renderAdminDeco,
-  },
-  kyeongjun: {
-    name:'경준', avatar:'🐺', theme:'kyeongjun',
-    welcomeTitle:'야생의 늑대 경준! 🌲', welcomeSub:'뼈다귀를 찾아 모험을 떠나자!',
-    // 💡 픽셀 늑대/🦴 아이템 컨셉
-    flower:'🦴', 
-    decoFn: renderKJDeco,
-  },
-  junho: {
-    name:'준호', avatar:'🐻‍❄️', theme:'junho',
-    welcomeTitle:'빙하의 북극곰 준호! ❄️', welcomeSub:'신선한 생선을 낚아볼까?',
-    // 💡 픽셀 북극곰/🐟 아이템 컨셉
-    flower:'🐟', 
-    decoFn: renderJHDeco,
-  },
-  junsu: {
-    name:'준수', avatar:'🐰', theme:'junsu',
-    welcomeTitle:'초원의 토끼 준수! 🌾', welcomeSub:'당근 캐기 딱 좋은 날이네!',
-    // 💡 픽셀 토끼/🥕 아이템 컨셉
-    flower:'🥕', 
-    decoFn: renderJSDeco,
-  },
+  admin: { name:'누나', avatar:'🐝', theme:'admin', welcomeTitle:'관리자 서버 접속 🌿', welcomeSub:'꿀벌 누나의 서버 감시 중...', flower:'🌻', decoFn: renderAdminDeco },
+  kyeongjun: { name:'경준', avatar:'🐺', theme:'kyeongjun', welcomeTitle:'야생의 늑대 경준! 🌲', welcomeSub:'뼈다귀를 찾아 모험을 떠나자!', flower:'🦴', decoFn: renderKJDeco },
+  junho: { name:'준호', avatar:'🐻‍❄️', theme:'junho', welcomeTitle:'빙하의 북극곰 준호! ❄️', welcomeSub:'신선한 생선을 낚아볼까?', flower:'🐟', decoFn: renderJHDeco },
+  junsu: { name:'준수', avatar:'🐰', theme:'junsu', welcomeTitle:'초원의 토끼 준수! 🌾', welcomeSub:'당근 캐기 딱 좋은 날이네!', flower:'🥕', decoFn: renderJSDeco },
 };
 
 const BROTHERS = ['kyeongjun','junho','junsu'];
+let currentUser = null;
+let fbListeners = [];   
+let adminLoaded = false;
 
-let currentUser   = null;
-let fbListeners   = [];   
-let adminLoaded   = false;
+function lsGet(k) { try{ return JSON.parse(localStorage.getItem(k)); }catch{ return null; } }
+function lsSet(k,v) { try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
 
-/* ════════════════════════════════════════════
-   DATABASE HELPERS & AUTO CLEANUP
-════════════════════════════════════════════ */
-function lsGet(k)    { try{ return JSON.parse(localStorage.getItem(k)); }catch{ return null; } }
-function lsSet(k,v)  { try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+async function dbSet(path, data) { if (window.fbSet) { try { await window.fbSet(path, data); return; } catch{} } lsSet(path.replace(/\//g,'_'), data); }
+async function dbPush(path, data) { if (window.fbPush) { try { const r = await window.fbPush(path, data); return r?.key; } catch{} } const key = Date.now().toString(); const existing = lsGet(path.replace(/\//g,'_')) || {}; existing[key] = data; lsSet(path.replace(/\//g,'_'), existing); return key; }
+async function dbRemove(path) { if (window.fbRemove) { try { await window.fbRemove(path); return; } catch{} } lsSet(path.replace(/\//g,'_'), null); }
+function dbListen(path, cb) { if (window.fbListen) return window.fbListen(path, val => cb(val || {})); const id = setInterval(() => cb(lsGet(path.replace(/\//g,'_')) || {}), 1500); cb(lsGet(path.replace(/\//g,'_')) || {}); return () => clearInterval(id); }
 
-async function dbSet(path, data) {
-  if (window.fbSet) { try { await window.fbSet(path, data); return; } catch{} }
-  lsSet(path.replace(/\//g,'_'), data);
-}
-async function dbPush(path, data) {
-  if (window.fbPush) { try { const r = await window.fbPush(path, data); return r?.key; } catch{} }
-  const key = Date.now().toString();
-  const existing = lsGet(path.replace(/\//g,'_')) || {};
-  existing[key] = data;
-  lsSet(path.replace(/\//g,'_'), existing);
-  return key;
-}
-async function dbRemove(path) {
-  if (window.fbRemove) { try { await window.fbRemove(path); return; } catch{} }
-  lsSet(path.replace(/\//g,'_'), null);
-}
-function dbListen(path, cb) {
-  if (window.fbListen) return window.fbListen(path, val => cb(val || {}));
-  const id = setInterval(() => cb(lsGet(path.replace(/\//g,'_')) || {}), 1500);
-  cb(lsGet(path.replace(/\//g,'_')) || {});
-  return () => clearInterval(id);
-}
-
-// 완료된 항목 24시간 후 자동 삭제 로직
 async function cleanupTodos(uid, data) {
-  const now = Date.now();
-  const DAY_MS = 24 * 60 * 60 * 1000;
+  const now = Date.now(); const DAY_MS = 24 * 60 * 60 * 1000;
   if (!data) return;
-  Object.entries(data).forEach(([key, t]) => {
-    if (t.done && t.completedAt && (now - t.completedAt > DAY_MS)) {
-      dbRemove(`todos/${uid}/${key}`);
-    }
-  });
+  Object.entries(data).forEach(([key, t]) => { if (t.done && t.completedAt && (now - t.completedAt > DAY_MS)) dbRemove(`todos/${uid}/${key}`); });
 }
 
-/* ════════════════════════════════════════════
-   NAVIGATION & STRICT SECURITY
-════════════════════════════════════════════ */
 function goHome() {
-  fbListeners.forEach(u => { if(typeof u === 'function') u(); });
-  fbListeners = [];
-  adminLoaded = false;
-  currentUser = null;
+  fbListeners.forEach(u => { if(typeof u === 'function') u(); }); fbListeners = []; adminLoaded = false; currentUser = null;
   document.body.className = '';
   document.getElementById('home-screen').classList.add('active');
   document.getElementById('user-screen').classList.remove('active');
 }
 
 function goToUser(uid) {
-  currentUser = uid;
-  const u = USERS[uid];
+  currentUser = uid; const u = USERS[uid];
   document.getElementById('home-screen').classList.remove('active');
   document.getElementById('user-screen').classList.add('active');
   document.body.className = `theme-${u.theme}`;
-
-  document.getElementById('nav-avatar').textContent = u.avatar;
-  document.getElementById('nav-name').textContent   = u.name;
-  document.getElementById('welcome-emoji').textContent = u.avatar;
-  document.getElementById('welcome-title').textContent = u.welcomeTitle;
-  document.getElementById('welcome-sub').textContent   = u.welcomeSub;
-
+  document.getElementById('nav-avatar').textContent = u.avatar; document.getElementById('nav-name').textContent = u.name;
+  document.getElementById('welcome-title').textContent = u.welcomeTitle; document.getElementById('welcome-sub').textContent = u.welcomeSub;
+  
   u.decoFn();
 
-  const tabContainer = document.querySelector('.nav-tabs');
+  const tabContainer = document.getElementById('tab-container');
   if (uid === 'admin') {
-    tabContainer.innerHTML = `
-      <button class="tab-btn active" data-tab="admin-tab" onclick="switchTab('admin-tab')">📊 서버 관리</button>
-      <button class="tab-btn" data-tab="cal-tab" onclick="switchTab('cal-tab')">📅 달력</button>
-    `;
+    tabContainer.innerHTML = `<button class="tab-btn active" data-tab="admin-tab" onclick="switchTab('admin-tab')">📊 서버 관리</button><button class="tab-btn" data-tab="cal-tab" onclick="switchTab('cal-tab')">📅 달력</button>`;
     switchTab('admin-tab');
   } else {
-    tabContainer.innerHTML = `
-      <button class="tab-btn active" data-tab="home-tab" onclick="switchTab('home-tab')">🏠 홈</button>
-      <button class="tab-btn" data-tab="todo-tab" onclick="switchTab('todo-tab')">📋 퀘스트</button>
-      <button class="tab-btn" data-tab="sticker-tab" onclick="switchTab('sticker-tab')">🎒 인벤토리</button>
-      <button class="tab-btn" data-tab="diary-tab" onclick="switchTab('diary-tab')">✏️ 기록장</button>
-    `;
+    tabContainer.innerHTML = `<button class="tab-btn active" data-tab="home-tab" onclick="switchTab('home-tab')">🏠 홈</button><button class="tab-btn" data-tab="todo-tab" onclick="switchTab('todo-tab')">📋 퀘스트</button><button class="tab-btn" data-tab="sticker-tab" onclick="switchTab('sticker-tab')">🎒 인벤토리</button><button class="tab-btn" data-tab="diary-tab" onclick="switchTab('diary-tab')">✏️ 기록장</button>`;
     switchTab('home-tab');
   }
-  
   attachListeners(uid);
 }
 
 function attachListeners(uid) {
-  fbListeners.forEach(u => { if(typeof u==='function') u(); });
-  fbListeners = [];
-
-  if (uid === 'admin') {
-    renderAdminPanel();
-  } else {
-    const u1 = dbListen(`todos/${uid}`, v => { cleanupTodos(uid, v); renderTodos(v); });
-    const u2 = dbListen(`stickers/${uid}`, v => renderFlowerBed(v));
-    const u3 = dbListen(`diaries/${uid}`,  v => renderDiaries(v));
-    fbListeners.push(u1, u2, u3);
+  fbListeners.forEach(u => { if(typeof u==='function') u(); }); fbListeners = [];
+  if (uid === 'admin') { renderAdminPanel(); } 
+  else {
+    fbListeners.push( dbListen(`todos/${uid}`, v => { cleanupTodos(uid, v); renderTodos(v); }) );
+    fbListeners.push( dbListen(`stickers/${uid}`, v => renderFlowerBed(v)) );
+    fbListeners.push( dbListen(`diaries/${uid}`,  v => renderDiaries(v)) );
   }
 }
 
 function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
-  document.querySelectorAll('.panel').forEach(p => {
-    p.classList.remove('active');
-    if (p.id === tabId) p.classList.add('active');
-  });
-  
+  document.querySelectorAll('.panel').forEach(p => { p.classList.remove('active'); if (p.id === tabId) p.classList.add('active'); });
   if (tabId === 'home-tab') renderHomeTab();
   if (tabId === 'admin-tab') renderAdminPanel();
+  if (tabId === 'cal-tab') renderCalendar();
 }
 
-/* ════════════════════════════════════════════
-   ADMIN PANEL
-════════════════════════════════════════════ */
 function renderAdminPanel() {
-  const row = document.getElementById('admin-row');
-  if (!row) return;
-
+  const row = document.getElementById('admin-row'); if (!row) return;
   if (row.innerHTML.trim() === '') {
     row.innerHTML = BROTHERS.map(b => `
       <div class="admin-kid-card">
-        <div class="admin-kid-title">${USERS[b].avatar} ${USERS[b].name} 관리</div>
-        <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div class="card-head" style="font-size:1.1rem; border:none; padding:0;">${USERS[b].avatar} ${USERS[b].name} 관리</div>
+        <div style="display:flex;gap:8px;margin:10px 0;">
           <input id="task-inp-${b}" class="g-input" placeholder="새로운 퀘스트 부여..." style="flex:1" onkeydown="if(event.key==='Enter')adminAddTask('${b}')">
           <button class="btn btn-sm" onclick="adminAddTask('${b}')">추가</button>
         </div>
-        <div id="admin-todo-full-${b}" class="admin-todo-list-container"></div>
+        <div id="admin-todo-full-${b}"></div>
         <button class="btn btn-sm" style="margin-top:12px; width:100%; background-color:#5E9D34;" onclick="adminAwardFlower('${b}')">${USERS[b].flower} 특별 보상 지급</button>
       </div>`).join('');
   }
-
   if (!adminLoaded) {
     BROTHERS.forEach(b => {
-      const u = dbListen(`todos/${b}`, data => {
-        const el = document.getElementById(`admin-todo-full-${b}`);
-        if (!el) return;
+      fbListeners.push(dbListen(`todos/${b}`, data => {
+        const el = document.getElementById(`admin-todo-full-${b}`); if (!el) return;
         const todos = data ? Object.entries(data).sort((a,b)=>b[1].created - a[1].created) : [];
-        if (todos.length === 0) { el.innerHTML = `<div class="todo-empty">퀘스트 없음</div>`; return; }
-        el.innerHTML = `<ul class="todo-list">${
-          todos.map(([key,t]) => `
-            <li class="todo-item ${t.done?'done':''}" style="padding:6px 8px; margin-bottom:4px; font-size:0.85rem">
-              <span>${t.done?'✅':'⬜'}</span>
-              <span class="todo-text">${escHtml(t.text)}</span>
-              <button class="del-btn" onclick="deleteTodo('${key}','${b}')">✕</button>
-            </li>`).join('')
-        }</ul>`;
-      });
-      fbListeners.push(u);
+        if (todos.length === 0) { el.innerHTML = `<div style="font-size:0.9rem; color:#666;">퀘스트 없음</div>`; return; }
+        el.innerHTML = `<ul class="todo-list">${todos.map(([key,t]) => `<li class="todo-item ${t.done?'done':''}" style="padding:6px 8px; margin-bottom:4px; font-size:0.85rem"><span>${t.done?'✅':'⬜'}</span><span class="todo-text">${escHtml(t.text)}</span><button class="del-btn" onclick="deleteTodo('${key}','${b}')">✕</button></li>`).join('')}</ul>`;
+      }));
     });
     adminLoaded = true;
   }
 }
 
 async function adminAddTask(uid) {
-  const inp = document.getElementById(`task-inp-${uid}`);
-  if (!inp || !inp.value.trim()) return;
-  await addTodo(uid, inp.value);
-  inp.value = '';
+  const inp = document.getElementById(`task-inp-${uid}`); if (!inp || !inp.value.trim()) return;
+  await addTodo(uid, inp.value); inp.value = '';
 }
 
-/* ════════════════════════════════════════════
-   BROTHER'S HOME TAB
-════════════════════════════════════════════ */
 function renderHomeTab() {
-  const wrap = document.getElementById('home-dynamic');
-  if (!wrap) return;
-
-  // 💡 [기능 1] '정원 파티' -> '마인콘'으로 변경
+  const wrap = document.getElementById('home-dynamic'); if (!wrap) return;
   wrap.innerHTML = `
-    <div class="card fade-up"><div class="card-head">🏆 서버 랭킹</div><div id="home-rank-snippet"></div></div>
-    <div class="card fade-up"><div class="card-head">🎒 내 인벤토리</div><div id="home-sticker-snippet"></div></div>
-    <div class="card fade-up"><div class="card-head">📋 남은 퀘스트</div><div id="home-todo-snippet"></div></div>
+    <div class="card"><div class="card-head">🏆 서버 랭킹</div><div id="home-rank-snippet"></div></div>
+    <div class="card"><div class="card-head">🎒 내 인벤토리</div><div id="home-sticker-snippet"></div></div>
+    <div class="card"><div class="card-head">📋 남은 퀘스트</div><div id="home-todo-snippet"></div></div>
   `;
 
-  // 1. 랭킹 시스템
   const stickerCounts = {};
   BROTHERS.forEach(b => {
-    const u = dbListen(`stickers/${b}`, data => {
+    fbListeners.push(dbListen(`stickers/${b}`, data => {
       stickerCounts[b] = data ? Object.keys(data).length : 0;
-      const el = document.getElementById('home-rank-snippet');
-      if (!el) return;
+      const el = document.getElementById('home-rank-snippet'); if (!el) return;
       const sorted = Object.entries(stickerCounts).sort((x,y) => y[1] - x[1]);
-      el.innerHTML = sorted.map(([kid, count], i) => `
-        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:2px solid var(--mc-border-dark); font-size:0.95rem">
-          <span>${i===0?'💎':'🔹'.replace('🔹', i===1?'🥇':'🥈')} ${USERS[kid].avatar} ${USERS[kid].name}</span>
-          <span style="font-weight:bold;">${count}${USERS[kid].flower}</span>
-        </div>
-      `).join('');
-    });
-    fbListeners.push(u);
+      el.innerHTML = sorted.map(([kid, count], i) => `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:2px solid var(--mc-border-dark); font-size:0.95rem"><span>${i===0?'💎':'🔹'.replace('🔹', i===1?'🥇':'🥈')} ${USERS[kid].avatar} ${USERS[kid].name}</span><span style="font-weight:bold;">${count}${USERS[kid].flower}</span></div>`).join('');
+    }));
   });
 
-  const u2 = dbListen(`stickers/${currentUser}`, v => {
+  fbListeners.push(dbListen(`stickers/${currentUser}`, v => {
     const count = v ? Object.keys(v).length : 0;
-    const innerSnippet = document.getElementById('home-sticker-snippet');
-    // 💡 [기능 1] '심은 꽃' -> '아이템 획득'으로 변경
-    if (innerSnippet) innerSnippet.innerHTML = `
-      <div style="font-size:1.5rem; font-weight:bold; text-align:center;">${USERS[currentUser].flower} x ${count}</div><div style="text-align:center; font-size:0.8rem; opacity:0.6">아이템 획득 완료!</div>`;
-  });
+    const el = document.getElementById('home-sticker-snippet');
+    if (el) el.innerHTML = `<div style="font-size:1.5rem; font-weight:bold; text-align:center;">${USERS[currentUser].flower} x ${count}</div><div style="text-align:center; font-size:0.8rem; opacity:0.6">아이템 획득 완료!</div>`;
+  }));
   
-  const u3 = dbListen(`todos/${currentUser}`, v => {
-    const todos = v ? Object.entries(v) : [];
-    const done  = todos.filter(([,t])=>t.done).length;
-    const homeTodo = document.getElementById('home-todo-snippet');
-    if (homeTodo) {
-      const recent = todos.slice(0,3).map(([key,t]) => `
-        <li class="todo-item ${t.done?'done':''}" style="padding:10px">
-          <button class="check-btn ${t.done?'done':''}" onclick="toggleTodo('${key}','${currentUser}',${!t.done})" style="width:24px;height:24px;font-size:12px">${t.done?'✓':''}</button>
-          <span class="todo-text" style="font-size:0.88rem">${escHtml(t.text)}</span>
-        </li>`).join('');
-      homeTodo.innerHTML = `<div style="font-weight:700;margin-bottom:8px">진척도: ${done}/${todos.length} 완료</div><ul class="todo-list">${recent || `<div class="todo-empty">퀘스트가 없습니다!</div>`}</ul>`;
+  fbListeners.push(dbListen(`todos/${currentUser}`, v => {
+    const todos = v ? Object.entries(v) : []; const done = todos.filter(([,t])=>t.done).length;
+    const el = document.getElementById('home-todo-snippet');
+    if (el) {
+      const recent = todos.slice(0,3).map(([key,t]) => `<li class="todo-item ${t.done?'done':''}" style="padding:10px"><button class="check-btn ${t.done?'done':''}" onclick="toggleTodo('${key}','${currentUser}',${!t.done})">${t.done?'✓':''}</button><span class="todo-text">${escHtml(t.text)}</span></li>`).join('');
+      el.innerHTML = `<div style="font-weight:700;margin-bottom:8px">진척도: ${done}/${todos.length} 완료</div><ul class="todo-list">${recent || `<div style="color:#666;">퀘스트가 없습니다!</div>`}</ul>`;
     }
-  });
-  fbListeners.push(u2, u3);
+  }));
 }
 
-/* ════════════════════════════════════════════
-   TODOS, REWARDS & STICKERS
-════════════════════════════════════════════ */
 function renderTodos(data) {
-  const list = document.getElementById('todo-list');
-  if (!list) return;
+  const list = document.getElementById('todo-list'); if (!list) return;
   const todos = data ? Object.entries(data).sort((a,b)=>a[1].done - b[1].done) : [];
-  if (todos.length === 0) { list.innerHTML = `<div class="todo-empty">조용하네요...</div>`; return; }
-  list.innerHTML = todos.map(([key, t]) => `
-    <li class="todo-item ${t.done ? 'done' : ''}">
-      <button class="check-btn ${t.done ? 'done' : ''}" onclick="toggleTodo('${key}','${currentUser}',${!t.done})">${t.done ? '✓' : ''}</button>
-      <span class="todo-text">${escHtml(t.text)}</span>
-      <button class="del-btn" onclick="deleteTodo('${key}','${currentUser}')">✕</button>
-    </li>`).join('');
+  if (todos.length === 0) { list.innerHTML = `<div style="color:#666; padding:10px;">조용하네요...</div>`; return; }
+  list.innerHTML = todos.map(([key, t]) => `<li class="todo-item ${t.done ? 'done' : ''}"><button class="check-btn ${t.done ? 'done' : ''}" onclick="toggleTodo('${key}','${currentUser}',${!t.done})">${t.done ? '✓' : ''}</button><span class="todo-text">${escHtml(t.text)}</span><button class="del-btn" onclick="deleteTodo('${key}','${currentUser}')">✕</button></li>`).join('');
 }
 
-async function addTodo(uid, text) {
-  if (!text.trim()) return;
-  await dbPush(`todos/${uid}`, { text: text.trim(), done: false, created: Date.now(), completedAt: null });
-}
+async function addTodo(uid, text) { if (!text.trim()) return; await dbPush(`todos/${uid}`, { text: text.trim(), done: false, created: Date.now(), completedAt: null }); }
 async function deleteTodo(key, uid) { await dbRemove(`todos/${uid}/${key}`); }
 
 async function toggleTodo(key, uid, newDone) {
   const completedAt = newDone ? Date.now() : null;
-  await dbSet(`todos/${uid}/${key}/done`, newDone);
-  await dbSet(`todos/${uid}/${key}/completedAt`, completedAt);
-
+  await dbSet(`todos/${uid}/${key}/done`, newDone); await dbSet(`todos/${uid}/${key}/completedAt`, completedAt);
   if (newDone) {
-    playSound(uid); bloomEffect(event);
-    // 💡 [기능 1] '경험치+'로 완료 알림
-    showCel('경험치+', '퀘스트 완료!', `잘했어요!`);
-    
+    playSound(uid); bloomEffect(event); showCel('✨', '경험치+', `퀘스트를 완료했습니다!`);
     const snap = await window.fbGet?.(`todos/${uid}`);
     const all = snap ? Object.values(snap.val() || {}) : Object.values(lsGet(`todos_${uid}`) || {});
     const doneCount = all.filter(t => t.done).length;
-    
     if (doneCount > 0 && doneCount % 3 === 0) {
       await awardStickerSilent(uid);
-      // 💡 [기능 1] '아이템 획득!'으로 변경
-      showCel('🎁', '아이템 획득!', `3콤보 달성! ${USERS[uid].flower} 1개를 얻었습니다!`);
+      setTimeout(()=>showCel('🎁', '아이템 획득!', `3콤보 달성! ${USERS[uid].flower} 1개를 얻었습니다!`), 1500);
     }
   }
 }
@@ -494,44 +454,35 @@ async function awardStickerSilent(uid) {
 }
 
 async function adminAwardFlower(uid) {
-  await awardStickerSilent(uid);
-  showCel('🎁', '관리자 보상!', `${USERS[uid].name}에게 ${USERS[uid].flower} 아이템을 지급했습니다!`);
+  await awardStickerSilent(uid); showCel('🎁', '관리자 보상!', `${USERS[uid].name}에게 ${USERS[uid].flower} 아이템을 지급했습니다!`);
 }
 
 function renderFlowerBed(data) {
-  const grid = document.getElementById('flower-grid');
-  const countEl = document.getElementById('sticker-count');
-  if (!grid) return;
-  const stickers = data ? Object.entries(data) : [];
-  if (countEl) countEl.textContent = stickers.length;
-  // 각자의 고유 아이템(뼈다귀, 생선, 당근 등)으로 렌더링!
+  const grid = document.getElementById('flower-grid'); const countEl = document.getElementById('sticker-count'); if (!grid) return;
+  const stickers = data ? Object.entries(data) : []; if (countEl) countEl.textContent = stickers.length;
   const myItem = USERS[currentUser].flower; 
-  grid.innerHTML = stickers.map(([,s]) => `<div class="flower-item"><span class="flower-emoji">${myItem}</span><div style="font-size:0.6rem; color:#fff; margin-top:5px;">${s.date}</div></div>`).join('');
+  grid.innerHTML = stickers.map(([,s]) => `<div class="flower-item"><span class="flower-emoji" style="text-shadow: 2px 2px 0 rgba(0,0,0,0.5);">${myItem}</span><div style="font-size:0.65rem; color:#fff; margin-top:8px; font-weight:bold; text-shadow: 1px 1px 0 #000;">${s.date}</div></div>`).join('');
 }
 
 function renderDiaries(data) {
-  const wrap = document.getElementById('diary-list');
-  if (!wrap) return;
+  const wrap = document.getElementById('diary-list'); if (!wrap) return;
   const entries = data ? Object.entries(data).sort((a,b) => b[1].ts - a[1].ts) : [];
-  wrap.innerHTML = entries.map(([,d]) => `<div class="diary-entry" style="background:#fff; border:2px solid #555; padding:10px; margin-bottom:10px;"><div style="font-weight:bold; border-bottom:1px dashed #ccc; padding-bottom:5px;">📅 ${d.date}</div><div style="margin-top:5px;">${escHtml(d.text)}</div></div>`).join('') || '<p style="text-align:center;">기록이 없습니다.</p>';
+  wrap.innerHTML = entries.map(([,d]) => `<div style="background:rgba(255,255,255,0.7); border:2px solid var(--mc-border-dark); padding:10px; margin-bottom:10px;"><div style="font-weight:bold; border-bottom:2px solid var(--mc-border-dark); padding-bottom:5px; margin-bottom:5px;">📅 ${d.date}</div><div>${escHtml(d.text)}</div></div>`).join('') || '<p style="color:#666;">기록이 없습니다.</p>';
 }
 
 async function saveDiary() {
-  const inp = document.getElementById('diary-input');
-  if (!inp.value.trim()) return;
+  const inp = document.getElementById('diary-input'); if (!inp.value.trim()) return;
   const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
   await dbPush(`diaries/${currentUser}`, { text: inp.value, date: today, ts: Date.now() });
   inp.value = ''; showCel('📓', '저장 완료!', '서버 로그에 기록되었습니다.');
 }
 
 async function renderCalendar() {
-  const grid = document.getElementById('cal-grid');
-  if (!grid) return;
+  const grid = document.getElementById('cal-grid'); if (!grid) return;
   const now = new Date(), year = now.getFullYear(), month = now.getMonth();
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate(); const firstDay = new Date(year, month, 1).getDay();
   let html = ['일','월','화','수','목','금','토'].map(d => `<div class="cal-day-label">${d}</div>`).join('');
-  for (let i=0; i<firstDay; i++) html += `<div class="cal-cell"></div>`;
+  for (let i=0; i<firstDay; i++) html += `<div class="cal-cell" style="border:none; background:transparent;"></div>`;
   for (let d=1; d<=daysInMonth; d++) {
     const isToday = d === now.getDate();
     html += `<div class="cal-cell ${isToday?'today':''}"><span class="cal-num">${d}</span></div>`;
@@ -539,10 +490,6 @@ async function renderCalendar() {
   grid.innerHTML = html;
 }
 
-/* ════════════════════════════════════════════
-   VISUALS & ANIMATIONS (마크 몹 컨셉 완벽 구현!)
-════════════════════════════════════════════ */
-// 💡 [기능 2, 4] 동물 픽셀 이미지로 대체 (image-rendering 적용)
 function renderAdminDeco() { document.getElementById('scene-bg').innerHTML = `<div class="mc-pixelated-mobs">🐝🌻</div>`; }
 function renderKJDeco() { document.getElementById('scene-bg').innerHTML = `<div class="mc-pixelated-mobs">🐺🌲</div>`; }
 function renderJHDeco() { document.getElementById('scene-bg').innerHTML = `<div class="mc-pixelated-mobs">🐻‍❄️🧊</div>`; }
@@ -552,7 +499,6 @@ function showCel(emoji, title, msg) { document.getElementById('cel-emoji').textC
 function closeCel() { document.getElementById('cel-overlay').classList.remove('show'); }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// 💡 꽃잎 -> 경험치 구슬처럼 각진 아이템 통통 애니메이션
 function bloomEffect(e) {
   const x = e?.clientX ?? window.innerWidth/2, y = e?.clientY ?? window.innerHeight/2;
   const myItem = USERS[currentUser].flower;
@@ -565,23 +511,14 @@ function bloomEffect(e) {
   }
 }
 
-// 💡 마크 경험치 구슬 사운드 (XP Orb Sound) 유지
 let _ac; function getAC() { return _ac || (_ac = new (window.AudioContext||window.webkitAudioContext)()); }
 function playSound(uid) { 
   try { 
-    const ac = getAC(); 
-    const o = ac.createOscillator();
-    const g = ac.createGain(); 
-    o.connect(g); 
-    g.connect(ac.destination); 
-    o.type = 'sine'; 
-    const pitch = 800 + (Math.random() * 400); 
-    o.frequency.setValueAtTime(pitch, ac.currentTime); 
-    g.gain.setValueAtTime(0, ac.currentTime);
-    g.gain.linearRampToValueAtTime(0.3, ac.currentTime + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
-    o.start(ac.currentTime); 
-    o.stop(ac.currentTime + 0.3);
+    const ac = getAC(); const o = ac.createOscillator(); const g = ac.createGain(); 
+    o.connect(g); g.connect(ac.destination); 
+    o.type = 'sine'; o.frequency.setValueAtTime(800 + (Math.random() * 400), ac.currentTime); 
+    g.gain.setValueAtTime(0, ac.currentTime); g.gain.linearRampToValueAtTime(0.3, ac.currentTime + 0.02); g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
+    o.start(ac.currentTime); o.stop(ac.currentTime + 0.3);
   } catch(e) {} 
 }
 
